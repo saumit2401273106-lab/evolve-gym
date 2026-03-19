@@ -1,0 +1,359 @@
+{
+  "users": [
+    {
+      "id": "m1",
+      "role": "member",
+      "email": "member@evolve.com",
+      "pass": "123",
+      "name": "Alex Johnson",
+      "plan": "Pro",
+      "sw": 85,
+      "tw": 75,
+      "reg": "2026-03-19",
+      "workoutPlan": {
+        "type": "Strength and Hypertrophy",
+        "freq": "3 days per week",
+        "notes": "",
+        "days": [
+          {
+            "day": "Monday",
+            "title": "Push",
+            "ex": [
+              {
+                "id": "e1",
+                "n": "Bench Press",
+                "s": "4x10"
+              },
+              {
+                "id": "e2",
+                "n": "Incline Press",
+                "s": "3x12"
+              },
+              {
+                "id": "e3",
+                "n": "Tricep Dips",
+                "s": "3x15"
+              }
+            ]
+          },
+          {
+            "day": "Tuesday",
+            "title": "Pull",
+            "ex": [
+              {
+                "id": "e4",
+                "n": "Barbell Rows",
+                "s": "4x10"
+              },
+              {
+                "id": "e5",
+                "n": "Pull Ups",
+                "s": "3x8"
+              },
+              {
+                "id": "e6",
+                "n": "Bicep Curls",
+                "s": "3x12"
+              }
+            ]
+          },
+          {
+            "day": "Thursday",
+            "title": "Legs",
+            "ex": [
+              {
+                "id": "e7",
+                "n": "Squats",
+                "s": "4x8"
+              },
+              {
+                "id": "e8",
+                "n": "Leg Press",
+                "s": "3x12"
+              },
+              {
+                "id": "e9",
+                "n": "Calf Raises",
+                "s": "3x15"
+              }
+            ]
+          },
+          {
+            "day": "Friday",
+            "title": "Shoulders",
+            "ex": [
+              {
+                "id": "e10",
+                "n": "Overhead Press",
+                "s": "4x10"
+              },
+              {
+                "id": "e11",
+                "n": "Lateral Raises",
+                "s": "3x12"
+              }
+            ]
+          },
+          {
+            "day": "Saturday",
+            "title": "Cardio",
+            "ex": [
+              {
+                "id": "e12",
+                "n": "Treadmill",
+                "s": "20 mins"
+              },
+              {
+                "id": "e13",
+                "n": "Cycling",
+                "s": "15 mins"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "t1",
+      "role": "trainer",
+      "email": "trainer@evolve.com",
+      "pass": "trainer123",
+      "name": "Raj Singh"
+    },
+    {
+      "name": "saumit",
+      "email": "saumitbhojne@gmail.com",
+      "pass": "saumit2510",
+      "age": 20,
+      "sw": 65,
+      "tw": 80,
+      "plan": "Basic",
+      "id": "u1773862190743",
+      "role": "member",
+      "reg": "2026-03-19",
+      "dietPlan": {
+        "goal": "Fat Loss",
+        "cals": "1200",
+        "restrict": "no",
+        "m": {
+          "p": 45,
+          "c": 45,
+          "f": 10
+        },
+        "meals": [
+          {
+            "id": "b",
+            "n": "Breakfast",
+            "cals": 420,
+            "p": 14,
+            "c": 18,
+            "f": 3,
+            "items": [
+              "Oats with milk",
+              "Boiled eggs",
+              "Banana",
+              "Green tea"
+            ]
+          },
+          {
+            "id": "l",
+            "n": "Lunch",
+            "cals": 480,
+            "p": 18,
+            "c": 18,
+            "f": 4,
+            "items": [
+              "Brown rice",
+              "Grilled chicken",
+              "Mixed salad",
+              "Lemon water"
+            ]
+          },
+          {
+            "id": "d",
+            "n": "Dinner",
+            "cals": 300,
+            "p": 14,
+            "c": 9,
+            "f": 3,
+            "items": [
+              "Roti",
+              "Dal",
+              "Vegetables",
+              "Curd"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "u1773913208843",
+      "name": "aditya",
+      "email": "aditya@gmail.com",
+      "pass": "123456788",
+      "age": 20,
+      "weight": 60,
+      "targetWeight": 80,
+      "plan": "Basic",
+      "role": "member",
+      "reg": "2026-03-19",
+      "workoutPlan": {
+        "type": "Strength and Hypertrophy",
+        "freq": "3 days per week",
+        "notes": "",
+        "days": [
+          {
+            "day": "Monday",
+            "title": "Push",
+            "ex": [
+              {
+                "id": "e1",
+                "n": "Bench Press",
+                "s": "4x10"
+              },
+              {
+                "id": "e2",
+                "n": "Incline Press",
+                "s": "3x12"
+              },
+              {
+                "id": "e3",
+                "n": "Tricep Dips",
+                "s": "3x15"
+              }
+            ]
+          },
+          {
+            "day": "Tuesday",
+            "title": "Pull",
+            "ex": [
+              {
+                "id": "e4",
+                "n": "Barbell Rows",
+                "s": "4x10"
+              },
+              {
+                "id": "e5",
+                "n": "Pull Ups",
+                "s": "3x8"
+              },
+              {
+                "id": "e6",
+                "n": "Bicep Curls",
+                "s": "3x12"
+              }
+            ]
+          },
+          {
+            "day": "Thursday",
+            "title": "Legs",
+            "ex": [
+              {
+                "id": "e7",
+                "n": "Squats",
+                "s": "4x8"
+              },
+              {
+                "id": "e8",
+                "n": "Leg Press",
+                "s": "3x12"
+              },
+              {
+                "id": "e9",
+                "n": "Calf Raises",
+                "s": "3x15"
+              }
+            ]
+          },
+          {
+            "day": "Friday",
+            "title": "Shoulders",
+            "ex": [
+              {
+                "id": "e10",
+                "n": "Overhead Press",
+                "s": "4x10"
+              },
+              {
+                "id": "e11",
+                "n": "Lateral Raises",
+                "s": "3x12"
+              }
+            ]
+          },
+          {
+            "day": "Saturday",
+            "title": "Cardio",
+            "ex": [
+              {
+                "id": "e12",
+                "n": "Treadmill",
+                "s": "20 mins"
+              },
+              {
+                "id": "e13",
+                "n": "Cycling",
+                "s": "15 mins"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "u1773913838105",
+      "name": "aditya",
+      "email": "aditya123@gmail.com",
+      "pass": "12345678",
+      "age": 20,
+      "weight": 60,
+      "targetWeight": 80,
+      "plan": "Basic",
+      "role": "member",
+      "reg": "2026-03-19"
+    }
+  ],
+  "attendance": [
+    {
+      "userId": "m1",
+      "date": "2026-03-19",
+      "ts": 1773861588831
+    },
+    {
+      "userId": "u1773913208843",
+      "date": "2026-03-19",
+      "ts": 1773913223432
+    },
+    {
+      "userId": "u1773913838105",
+      "date": "2026-03-19",
+      "ts": 1773913846067
+    }
+  ],
+  "trainerAttendance": [
+    {
+      "trainerId": "t1",
+      "type": "clockin",
+      "date": "2026-03-19",
+      "ts": 1773913295877
+    }
+  ],
+  "progress": [
+    {
+      "userId": "u1773913208843",
+      "date": "2026-03-19",
+      "weight": "61",
+      "notes": "strong"
+    }
+  ],
+  "orders": [],
+  "dailyStats": [
+    {
+      "userId": "u1773913208843",
+      "exercises": {},
+      "meals": {
+        "2026-03-19_b": true
+      }
+    }
+  ]
+}

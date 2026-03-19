@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVOLVE | Gym</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#0a0a0c;--surface:#151518;--surface-hover:#1e1e23;--accent:#e8ff47;--accent-glow:rgba(232,255,71,0.3);--text:#fff;--text-muted:#888890;--border:#2a2a30;--danger:#ff4747;--success:#47ff82;--warn:#ffb847;--font-head:'Bebas Neue',display;--font-body:'DM Sans',sans-serif;--nav-width:260px;}
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+        body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;background:url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="ns"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23ns)" opacity="0.04"/%3E%3C/svg%3E');}
+        h1,h2,h3,h4{font-family:var(--font-head);letter-spacing:1px;font-weight:normal;}
+        .btn{background:var(--accent);color:#000;font-family:var(--font-head);font-size:1.2rem;padding:0.75rem 1.5rem;border:none;border-radius:4px;cursor:pointer;transition:0.3s;text-transform:uppercase;}
+        .btn:hover:not(:disabled){box-shadow:0 0 15px var(--accent-glow);transform:translateY(-2px);}
+        .btn:disabled{opacity:0.5;cursor:not-allowed;}
+        .btn-outline{background:transparent;color:var(--accent);border:1px solid var(--accent);}
+        .btn-danger{background:var(--danger);color:#fff;border-color:var(--danger);}
+        .form-control{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;padding:0.75rem 1rem;border-radius:4px;font-family:var(--font-body);transition:0.3s;margin-bottom:1rem;}
+        .form-control:focus{outline:none;border-color:var(--accent);}
+        label{display:block;color:var(--text-muted);margin-bottom:0.5rem;font-size:0.9rem;}
+        .view{display:none;opacity:0;transition:opacity 0.4s;min-height:100vh;}
+        .view.active{display:flex;opacity:1;}
+        #auth-view{justify-content:center;align-items:center;background:radial-gradient(circle, var(--surface) 0%, var(--bg) 100%);}
+        .auth-box{background:var(--surface);padding:3rem;border-radius:12px;width:100%;max-width:400px;border:1px solid var(--border);}
+        .role-toggle{display:flex;background:rgba(0,0,0,0.5);border-radius:4px;margin-bottom:2rem;padding:4px;}
+        .role-btn{flex:1;text-align:center;padding:0.5rem;cursor:pointer;font-family:var(--font-head);font-size:1.2rem;color:var(--text-muted);border-radius:4px;transition:0.3s;}
+        .role-btn.active{background:var(--surface-hover);color:var(--accent);}
+        .sidebar{width:var(--nav-width);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100;transition:0.3s;}
+        .brand{padding:2rem;}
+        .nav-item{padding:1rem 2rem;color:var(--text-muted);font-family:var(--font-head);font-size:1.4rem;cursor:pointer;transition:0.2s;position:relative;display:flex;justify-content:space-between;align-items:center;}
+        .nav-item:hover{color:var(--text);background:rgba(255,255,255,0.02);}
+        .nav-item.active{color:var(--accent);background:rgba(232,255,71,0.05);}
+        .nav-item.active::before{content:'';position:absolute;left:0;top:0;height:100%;width:4px;background:var(--accent);box-shadow:0 0 10px var(--accent-glow);}
+        .main-content{flex:1;margin-left:var(--nav-width);padding:2rem 3rem;transition:0.3s;min-width:0;}
+        .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;}
+        .tab-pane{display:none;animation:fadeIn 0.4s ease;}
+        .tab-pane.active{display:block;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+        .grid{display:grid;gap:1.5rem;}
+        .grid-2{grid-template-columns:repeat(auto-fit,minmax(250px,1fr));}
+        .grid-3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
+        .grid-4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));}
+        .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.5rem;}
+        .stat-val{font-size:3rem;font-family:var(--font-head);color:#fff;}
+        .badge{font-size:0.8rem;padding:4px 8px;border-radius:4px;font-weight:bold;}
+        .b-warn{background:rgba(255,184,71,0.2);color:var(--warn);}
+        .b-green{background:rgba(71,255,130,0.2);color:var(--success);}
+        .b-red{background:rgba(255,71,71,0.2);color:var(--danger);}
+        .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:1rem;}
+        .cal-day{aspect-ratio:1;background:var(--surface-hover);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:1.1rem;}
+        .cal-day.hd{background:transparent;color:#fff;}
+        .cal-day.p{background:rgba(71,255,130,0.2);color:var(--success);border:1px solid var(--success);}
+        .cal-day.a{background:rgba(255,71,71,0.2);color:var(--danger);}
+        .cal-day.td{border:1px solid var(--accent);}
+        .expandable{background:var(--surface-hover);border-radius:4px;margin-bottom:0.5rem;overflow:hidden;}
+        .exp-header{padding:1rem;display:flex;justify-content:space-between;cursor:pointer;font-family:var(--font-head);font-size:1.5rem;align-items:center;}
+        .exp-content{max-height:0;overflow:hidden;transition:0.3s;opacity:0;}
+        .expandable.open .exp-content{padding:1rem;max-height:1000px;opacity:1;border-top:1px solid var(--border);}
+        .ex-item{display:flex;align-items:center;gap:1rem;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+        .ex-item.done span{text-decoration:line-through;color:var(--success);}
+        .ex-checkbox{width:20px;height:20px;accent-color:var(--accent);cursor:pointer;}
+        .badge-done{background:var(--success);color:#000;font-size:0.8rem;padding:2px 6px;border-radius:4px;display:none;}
+        .expandable.all-done .badge-done{display:inline-block;}
+        .macro-bars{display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;}
+        .macro-bar{flex:1;min-width:150px;background:var(--surface);padding:1rem;border-radius:4px;border:1px solid var(--border);}
+        .meal-list{list-style:none;margin:1rem 0;color:#ddd;line-height:1.8;}
+        .meal-list li{display:flex;justify-content:space-between;}
+        .chart-container{height:250px;background:var(--surface-hover);border-radius:8px;padding:1rem;position:relative;}
+        .p-bar{width:100%;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;}
+        .p-fill{height:100%;background:var(--accent);transition:0.5s;box-shadow:0 0 10px var(--accent-glow);}
+        table{width:100%;border-collapse:collapse;}
+        th,td{padding:1rem;text-align:left;border-bottom:1px solid var(--border);}
+        th{color:var(--text-muted);font-weight:normal;font-size:0.9rem;text-transform:uppercase;}
+        tr.clickable{cursor:pointer;transition:0.2s;}
+        tr.clickable:hover{background:var(--surface-hover);}
+        .cart-panel{position:fixed;top:0;right:-400px;width:400px;height:100vh;background:var(--surface);z-index:1000;border-left:1px solid var(--accent);transition:0.3s;display:flex;flex-direction:column;}
+        .cart-panel.open{right:0;}
+        .cart-item{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;background:var(--surface-hover);padding:1rem;border-radius:4px;}
+        #toast-container{position:fixed;bottom:2rem;right:2rem;z-index:10000;display:flex;flex-direction:column;gap:0.5rem;}
+        .toast{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);padding:1rem 1.5rem;border-radius:4px;animation:slideIn 0.3s forwards;}
+        @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+        #spinner{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:99999;display:none;justify-content:center;align-items:center;}
+        .spinner-ring{width:50px;height:50px;border:4px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;}
+        @keyframes spin{100%{transform:rotate(360deg);}}
+        .hamburger{display:none;background:none;border:none;color:var(--accent);font-size:2rem;cursor:pointer;}
+        @media(max-width:900px){.sidebar{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}.main-content{margin-left:0;padding:1.5rem;}.hamburger{display:block;}.cart-panel{width:100%;right:-100%;}}
+    </style>
+</head>
+<body>
+    <div id="spinner"><div class="spinner-ring"></div></div>
+    <div id="toast-container"></div>
+    <div id="server-status" style="position:fixed; top:1rem; right:1rem; z-index:9999; display:flex; align-items:center; gap:0.5rem; font-family:var(--font-head); font-size:1.2rem; background:rgba(0,0,0,0.5); padding:0.5rem 1rem; border-radius:4px; border:1px solid var(--border);">
+        <div id="status-dot" style="width:12px; height:12px; border-radius:50%; background:#888;"></div><span id="status-text" style="color:#ddd">Ping...</span>
+    </div>
+
+    <!-- AUTH -->
+    <div id="auth-view" class="view active">
+        <div class="auth-box">
+            <h1 style="text-align:center; color:var(--accent); font-size:4rem; margin-bottom:1rem;">EVOLVE</h1>
+            <div class="role-toggle">
+                <div class="role-btn active" onclick="setRole('member')" id="btn-rm">Member</div>
+                <div class="role-btn" onclick="setRole('trainer')" id="btn-rt">Trainer</div>
+            </div>
+            <form id="login-form">
+                <div style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem; text-align:center; line-height:1.5;">
+                    Member: member@evolve.com / member123 <br> Trainer: trainer@evolve.com / trainer123
+                </div>
+                <input type="email" id="login-em" class="form-control" value="member@evolve.com">
+                <input type="password" id="login-pw" class="form-control" value="member123">
+                <button type="submit" class="btn" style="width:100%; margin-top:1rem;">Access Portal</button>
+                <div id="login-err" style="color:var(--danger); margin-top:1rem; text-align:center; display:none;">Invalid email or password</div>
+                <div style="text-align:center; margin-top:1rem;">
+                    <a href="#" onclick="toggleReg(true)" style="color:var(--accent); text-decoration:none;">New Member? Register Here</a>
+                </div>
+            </form>
+            <form id="reg-form" style="display:none;">
+                <input type="text" id="reg-name" class="form-control" placeholder="Full Name" required>
+                <input type="email" id="reg-em" class="form-control" placeholder="Email" required>
+                <input type="password" id="reg-pw" class="form-control" placeholder="Password" required>
+                <div style="display:flex; gap:10px;">
+                    <input type="number" id="reg-age" class="form-control" placeholder="Age" required>
+                    <input type="number" id="reg-sw" class="form-control" placeholder="Weight (kg)" required>
+                    <input type="number" id="reg-tw" class="form-control" placeholder="Target Wt" required>
+                </div>
+                <select id="reg-plan" class="form-control" required><option value="Basic">Basic Plan</option><option value="Pro">Pro Plan</option><option value="Elite">Elite Plan</option></select>
+                <button type="submit" class="btn" style="width:100%; margin-top:1rem;">Register Account</button>
+                <div style="text-align:center; margin-top:1rem;">
+                    <a href="#" onclick="toggleReg(false)" style="color:var(--text-muted); text-decoration:none;">Back to Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MEMBER -->
+    <div id="member-view" class="view">
+        <aside class="sidebar" id="m-side">
+            <div class="brand"><h2>EVOLVE</h2><span style="color:var(--text-muted); font-size:0.8rem; letter-spacing:2px;">MEMBER PORTAL</span></div>
+            <div id="m-nav">
+                <div class="nav-item active" data-tab="tab-overview">Overview</div><div class="nav-item" data-tab="tab-attendance">Attendance</div>
+                <div class="nav-item" data-tab="tab-workout">Workout</div><div class="nav-item" data-tab="tab-diet">Diet</div>
+                <div class="nav-item" data-tab="tab-progress">Progress</div><div class="nav-item" data-tab="tab-shop">Shop <span class="badge b-warn" id="nav-cart-badge">0</span></div>
+            </div>
+            <div style="padding:1.5rem; margin-top:auto; border-top:1px solid var(--border)">
+                <h4 id="m-user-name">User</h4><div style="color:var(--accent); font-size:0.8rem;" id="m-plan-badge">PLAN</div>
+                <button class="btn btn-outline" style="width:100%; margin-top:1rem;" onclick="logout()">Log Out</button>
+            </div>
+        </aside>
+        <main class="main-content">
+            <div class="header"><button class="hamburger" onclick="document.getElementById('m-side').classList.toggle('open')">☰</button><h2 id="m-title">Overview</h2><div id="m-date" style="color:var(--text-muted)"></div></div>
+
+            <div id="tab-overview" class="tab-pane m-tab active">
+                <div class="grid grid-4" style="margin-bottom: 2rem;">
+                    <div class="card"><h4 style="color:var(--text-muted)">Workouts</h4><div class="stat-val" style="color:var(--accent)" id="ov-workouts">0</div></div>
+                    <div class="card"><h4 style="color:var(--text-muted)">Current Weight</h4><div class="stat-val" id="ov-weight">--<span style="font-size:1rem;color:var(--text-muted)">kg</span></div></div>
+                    <div class="card" style="grid-column: span 2"><h4 style="color:var(--text-muted)">Goal Progress (<span id="ov-goal-perc">0%</span>)</h4>
+                        <div class="stat-val" style="color:var(--success); font-size:1.5rem; margin-top:10px" id="ov-goal-text">ON TRACK</div>
+                        <div class="p-bar" style="margin-top:10px"><div class="p-fill" id="ov-goal-bar" style="width:0%"></div></div></div>
+                </div>
+                <div class="grid grid-2">
+                    <div class="card"><h3 style="color:var(--accent); margin-bottom:1rem; font-size:1.8rem">Today's Workout</h3><div id="ov-today-wk" style="color:#ddd; line-height:1.6;"></div></div>
+                    <div class="card"><h3 style="color:var(--accent); margin-bottom:1rem; font-size:1.8rem">Today's Diet</h3><div id="ov-today-dt" style="color:#ddd; line-height:1.6;"></div></div>
+                </div>
+            </div>
+
+            <div id="tab-attendance" class="tab-pane m-tab">
+                <div class="card" style="text-align: center; padding: 3rem; margin-bottom: 2rem;">
+                    <h3 style="color:var(--text-muted);">Current Time</h3><div style="font-size:4rem; font-family:var(--font-head); letter-spacing:2px; margin:1rem;" id="m-clock">00:00:00</div>
+                    <button class="btn" id="btn-checkin" onclick="mCheckIn()" style="font-size:1.5rem; padding: 1rem 3rem;">Check In</button>
+                </div>
+                <div class="grid grid-2">
+                    <div class="card"><h3>Monthly Schedule</h3><div class="cal-grid" id="m-cal"></div></div>
+                    <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
+                        <h3 style="margin-bottom:1.5rem">Month Stats</h3>
+                        <p style="font-size:1.2rem; color:var(--text-muted); margin-bottom:1rem; display:flex; justify-content:space-between"><span>Present:</span> <span style="color:var(--success); font-family:var(--font-head); font-size:1.5rem" id="att-p">0</span></p>
+                        <p style="font-size:1.2rem; display:flex; justify-content:space-between"><span>Rate:</span> <span style="color:var(--accent); font-family:var(--font-head); font-size:1.5rem" id="att-r">0%</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-workout" class="tab-pane m-tab"><div id="workout-list"></div></div>
+            <div id="tab-diet" class="tab-pane m-tab">
+                <div class="card" style="margin-bottom:2rem; border-color:var(--accent);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap"><h3 style="color:var(--accent); font-size:2rem">Daily Targets</h3><div style="font-family:var(--font-head); font-size:2rem"><span id="diet-eaten">0</span> / <span id="diet-tot">0</span> kcal</div></div>
+                    <div class="macro-bars" style="margin-top:1.5rem; margin-bottom:0">
+                        <div class="macro-bar"><h4 style="color:var(--text-muted)">Protein</h4><div class="p-bar"><div class="p-fill" id="mac-p-bar" style="width:0%; background:#ff4747"></div></div><p style="margin-top:5px; font-weight:bold"><span id="mac-p">0</span>g</p></div>
+                        <div class="macro-bar"><h4 style="color:var(--text-muted)">Carbs</h4><div class="p-bar"><div class="p-fill" id="mac-c-bar" style="width:0%; background:#47ff82"></div></div><p style="margin-top:5px; font-weight:bold"><span id="mac-c">0</span>g</p></div>
+                        <div class="macro-bar"><h4 style="color:var(--text-muted)">Fats</h4><div class="p-bar"><div class="p-fill" id="mac-f-bar" style="width:0%; background:#e8ff47"></div></div><p style="margin-top:5px; font-weight:bold"><span id="mac-f">0</span>g</p></div></div>
+                </div>
+                <div class="grid grid-3" id="diet-meals"></div>
+            </div>
+
+            <div id="tab-progress" class="tab-pane m-tab">
+                <div class="grid grid-2" style="margin-bottom:2rem;">
+                    <div class="card"><h3 style="color:var(--accent); margin-bottom:1rem;">Log Progress</h3>
+                        <form onsubmit="logProgress(event)"><input type="number" step="0.1" id="p-weight" class="form-control" required placeholder="Weight (kg)"><input type="text" id="p-notes" class="form-control" placeholder="Notes"><button type="submit" class="btn" style="width:100%">Save Entry</button></form></div>
+                    <div class="card" style="text-align:center; display:flex; flex-direction:column; justify-content:center;"><h3>Target</h3><div class="stat-val" style="color:var(--accent)" id="prog-tw">--</div><p style="color:var(--text-muted); margin-bottom:1rem" id="prog-sw">Start: --</p></div>
+                </div>
+                <div class="card" style="margin-bottom:2rem;"><h3>Chart</h3><div class="chart-container"><svg width="100%" height="100%" preserveAspectRatio="none" id="prog-chart"></svg></div></div>
+                <div class="card" style="padding:0; overflow:hidden"><table id="prog-list"><thead><tr><th>Date</th><th>Weight</th><th>Notes</th></tr></thead><tbody></tbody></table></div>
+            </div>
+
+            <div id="tab-shop" class="tab-pane m-tab"><div style="text-align:right; margin-bottom:1rem;"><button class="btn" onclick="toggleCart()">🛒 Cart (<span id="cart-t-num">0</span>)</button></div><div class="grid grid-3" id="shop-grid"></div></div>
+        </main>
+        <div class="cart-panel" id="cart-panel"><div style="padding:2rem; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;"><h2 style="color:var(--accent)">Your Cart</h2><button class="btn-outline" style="border:none;" onclick="toggleCart()">✕</button></div><div id="cart-items" style="flex:1; overflow-y:auto; padding:2rem;"></div><div style="padding:2rem; border-top:1px solid var(--border);"><button class="btn" style="width:100%" onclick="checkoutCart()">Checkout</button></div></div>
+    </div>
+
+    <!-- TRAINER -->
+    <div id="trainer-view" class="view">
+        <aside class="sidebar" id="t-side" style="border-right-color:var(--accent)">
+            <div class="brand"><h2>EVOLVE</h2><span style="color:var(--accent); font-size:0.8rem; letter-spacing:2px;">TRAINER COMMAND</span></div>
+            <div id="t-nav">
+                <div class="nav-item active" data-tab="t-overview">Overview</div><div class="nav-item" data-tab="t-attend">My Attendance</div>
+                <div class="nav-item" data-tab="t-members">Members</div><div class="nav-item" data-tab="t-assign">Assign Plans</div>
+            </div>
+            <div style="padding:1.5rem; margin-top:auto; border-top:1px solid var(--border)">
+                <h4 id="t-name">Trainer</h4><div style="color:var(--accent); font-size:0.8rem;">INSTRUCTOR</div>
+                <button class="btn btn-outline" style="width:100%; margin-top:1rem" onclick="logout()">Log Out</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="header"><button class="hamburger" onclick="document.getElementById('t-side').classList.toggle('open')" style="color:var(--success)">☰</button><h2 id="t-title">Overview</h2><div id="t-date" style="color:var(--text-muted)"></div></div>
+
+            <div id="t-overview" class="tab-pane t-tab active">
+                <div class="grid grid-4" style="margin-bottom:2rem;">
+                    <div class="card"><h4 style="color:var(--text-muted)">Total Members</h4><div class="stat-val" id="to-tot">0</div></div>
+                    <div class="card"><h4 style="color:var(--text-muted)">Checked In Today</h4><div class="stat-val" style="color:var(--accent)" id="to-chk">0</div></div>
+                    <div class="card"><h4 style="color:var(--text-muted)">Avg Attendance</h4><div class="stat-val" style="color:var(--success)" id="to-avg">0%</div></div>
+                    <div class="card"><h4 style="color:var(--text-muted)">My Sessions</h4><div class="stat-val" style="color:var(--warn)" id="to-ses">0</div></div>
+                </div>
+                <div class="card" style="border-color:var(--warn)"><h3 style="color:var(--warn); margin-bottom:1.5rem;">⚠️ Members Needing Attention</h3><table id="t-attn-table"><thead><tr><th>Name</th><th>Flag Reason</th><th>Last Seen</th><th>Action</th></tr></thead><tbody></tbody></table></div>
+            </div>
+
+            <div id="t-attend" class="tab-pane t-tab">
+                <div class="grid grid-2">
+                    <div class="card" style="text-align:center; padding:3rem;">
+                        <h3 style="color:var(--text-muted)">Clock Status</h3><div style="font-size:4rem; font-family:var(--font-head); letter-spacing:2px; margin:1rem;" id="t-clock">00:00:00</div>
+                        <button class="btn" id="btn-tclock" onclick="tClockAct('clockin')" style="width:100%; max-width:200px">Clock In</button>
+                    </div>
+                    <div class="card">
+                        <h3>My Log (This Month)</h3><div class="cal-grid" id="t-cal"></div>
+                        <div class="grid grid-2" style="margin-top:1rem; gap:10px;">
+                            <div style="background:var(--surface-hover); padding:1rem; border-radius:4px">Days Present: <span id="t-spen" style="color:var(--success); font-weight:bold; font-size:1.2rem">0</span></div>
+                            <div style="background:var(--surface-hover); padding:1rem; border-radius:4px">Hours Worked: <span id="t-shrs" style="color:var(--accent); font-weight:bold; font-size:1.2rem">0</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top:2rem;"><h3>Daily Log List</h3><table style="margin-top:1rem;"><thead><tr><th>Date</th><th>Clock In</th><th>Clock Out</th><th>Hours</th></tr></thead><tbody id="t-shift-log"></tbody></table></div>
+            </div>
+
+            <div id="t-members" class="tab-pane t-tab">
+                <div class="card" style="margin-bottom:2rem; display:flex; gap:1rem; flex-wrap:wrap">
+                    <input type="text" class="form-control" id="search-mem" placeholder="Search member name..." style="margin:0; flex:1;" onkeyup="filterMembers()">
+                    <select class="form-control" id="filter-mem" style="margin:0; width:150px" onchange="filterMembers()"><option>All</option><option>Active</option><option>Inactive</option><option>No Plan</option></select>
+                </div>
+                <div class="card" style="padding:0; overflow:hidden;"><table id="sys-mem-table"><thead><tr><th>Name</th><th>Plan</th><th>Attendance</th><th>Last Checkin</th><th>Has Plans</th><th>Status</th></tr></thead><tbody id="t-mem-tbody"></tbody></table><div id="t-mem-empty" style="padding:3rem; text-align:center; color:var(--text-muted); display:none;">No members match.</div></div>
+            </div>
+
+            <div id="t-assign" class="tab-pane t-tab">
+                <div class="card" style="margin-bottom:2rem; border-color:var(--accent);"><label>Select Member</label><select class="form-control" id="form-sel-mem" style="max-width:400px; margin:0;"></select></div>
+                <div class="grid grid-2">
+                    <div class="card"><h3 style="color:var(--accent); margin-bottom:1.5rem">Assign Workout</h3>
+                        <label>Plan Type</label><select class="form-control" id="fw-type"><option>Strength and Hypertrophy</option><option>Fat Loss Circuit</option><option>Beginner Foundation</option><option>Advanced Powerlifting</option></select>
+                        <label>Frequency</label><select class="form-control" id="fw-freq"><option>3 days per week</option><option>4 days per week</option><option>5 days per week</option></select>
+                        <label>Trainer Notes</label><textarea class="form-control" id="fw-notes" rows="2"></textarea>
+                        <button class="btn" onclick="saveWkPlan()" style="width:100%">Deploy Workout Plan</button>
+                    </div>
+                    <div class="card"><h3 style="color:var(--accent); margin-bottom:1.5rem">Assign Diet</h3>
+                        <label>Goal</label><select class="form-control" id="fd-gl"><option>Fat Loss</option><option>Muscle Gain</option><option>Maintenance</option><option>Recomposition</option></select>
+                        <label>Daily Calorie Target</label><input type="number" class="form-control" id="fd-cals">
+                        <label>Restrictions</label><input type="text" class="form-control" id="fd-rest">
+                        <label>Macros (P / C / F % Slider)</label><div style="display:flex; gap:10px; margin-bottom:1rem;"><input type="number" class="form-control" id="fd-p" placeholder="% P"><input type="number" class="form-control" id="fd-c" placeholder="% C"><input type="number" class="form-control" id="fd-f" placeholder="% F"></div>
+                        <button class="btn" onclick="saveDietPlan()" style="width:100%">Deploy Diet Plan</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API = '/api';
+        const getToday = () => new Date().toLocaleDateString('en-CA');
+        const showToast = (msg, err) => { const c=document.getElementById('toast-container'); const t=document.createElement('div'); t.className='toast'; t.innerHTML=msg; if(err) t.style.borderLeftColor='var(--danger)'; c.appendChild(t); setTimeout(()=>{ t.style.animation='fadeOut 0.3s forwards'; setTimeout(()=>t.remove(),300); }, 3000); };
+        const logout = () => { sessionStorage.clear(); location.reload(); };
+
+        let currU = null; let rle='member'; let cCart=[]; 
+        function setRole(r){ rle=r; document.getElementById('btn-rm').classList.toggle('active', r==='member'); document.getElementById('btn-rt').classList.toggle('active', r==='trainer'); document.getElementById('login-em').value = r==='trainer'?'trainer@evolve.com':'member@evolve.com'; document.getElementById('login-pw').value = r==='trainer'?'trainer123':'123'; }
+
+        const fetchA = async (p, m='GET', b=null) => {
+            document.getElementById('spinner').style.display='flex';
+            let rl = sessionStorage.getItem('role') || 'member';
+            let opts = {method:m, headers:{'Content-Type':'application/json','x-role':rl}};
+            if(b) opts.body = JSON.stringify(b);
+            const controller = new AbortController(); const id = setTimeout(() => controller.abort(), 10000); opts.signal = controller.signal;
+            try { 
+                let r = await fetch(API+p, opts); clearTimeout(id); document.getElementById('spinner').style.display='none'; 
+                let data = await r.json();
+                if(!r.ok) throw new Error(data.error || 'API request failed'); 
+                return data;
+            } catch(e) { clearTimeout(id); document.getElementById('spinner').style.display='none'; throw e; }
+        };
+
+        function checkServer() {
+            fetch('/api/products')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('status-dot').style.background = 'var(--success)';
+                    document.getElementById('status-text').innerText = 'Online';
+                })
+                .catch(err => {
+                    document.getElementById('status-dot').style.background = 'var(--danger)';
+                    document.getElementById('status-text').innerHTML = '<span style="color:var(--danger)">Server offline</span>';
+                });
+        }
+        checkServer();
+
+        setInterval(()=>{
+            let n=new Date(); let hm=n.toLocaleTimeString('en-US',{hour12:false}); let ds=n.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric'});
+            ['m-clock','t-clock'].forEach(i=>{if(document.getElementById(i)) document.getElementById(i).innerText=hm;});
+            ['m-date','t-date'].forEach(i=>{if(document.getElementById(i)) document.getElementById(i).innerText=ds;});
+        },1000);
+
+        function toggleReg(show) { document.getElementById('login-form').style.display=show?'none':'block'; document.getElementById('reg-form').style.display=show?'block':'none'; document.querySelector('.role-toggle').style.display=show?'none':'flex'; document.getElementById('login-err').style.display='none'; }
+
+        document.getElementById('login-form').onsubmit = async(e) => { e.preventDefault();
+            document.getElementById('login-err').style.display='none';
+            try {
+                document.getElementById('spinner').style.display='flex';
+                let res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('login-em').value,
+                        pass: document.getElementById('login-pw').value,
+                        role: rle
+                    })
+                });
+                let data = await res.json();
+                document.getElementById('spinner').style.display='none';
+                if(!res.ok) throw new Error(data.error || 'Login failed');
+                
+                currU = data;
+                sessionStorage.setItem('role', currU.role); sessionStorage.setItem('id', currU.id); sessionStorage.setItem('name', currU.name);
+                document.getElementById('auth-view').classList.remove('active'); showToast('Welcome, '+currU.name);
+                if(currU.role==='trainer'){ document.getElementById('trainer-view').classList.add('active'); initT(); }
+                else{ document.getElementById('member-view').classList.add('active'); initM(); }
+            } catch(e) {
+                document.getElementById('spinner').style.display='none';
+                document.getElementById('login-err').innerText=e.message; 
+                document.getElementById('login-err').style.display='block'; 
+                showToast(e.message, true); 
+            }
+        };
+
+        document.getElementById('reg-form').onsubmit = async(e) => { e.preventDefault();
+            try {
+                document.getElementById('spinner').style.display='flex';
+                let res = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('reg-name').value,
+                        email: document.getElementById('reg-em').value,
+                        pass: document.getElementById('reg-pw').value,
+                        age: +document.getElementById('reg-age').value,
+                        weight: +document.getElementById('reg-sw').value,
+                        targetWeight: +document.getElementById('reg-tw').value,
+                        plan: document.getElementById('reg-plan').value
+                    })
+                });
+                let data = await res.json();
+                document.getElementById('spinner').style.display='none';
+                if(!res.ok) throw new Error(data.error || 'Registration failed');
+                
+                currU = data;
+                sessionStorage.setItem('role', currU.role); sessionStorage.setItem('id', currU.id); sessionStorage.setItem('name', currU.name);
+                document.getElementById('auth-view').classList.remove('active'); showToast('Registration successful! Welcome, '+currU.name);
+                document.getElementById('member-view').classList.add('active'); initM();
+            } catch(e) { 
+                document.getElementById('spinner').style.display='none';
+                showToast(e.message, true); 
+            }
+        };
+
+        // Fallback plans if db is empty for mapping arrays
+        const fbWk=[{day:'Monday',title:'Push & Legs',ex:[{id:'e1',n:'Bench Press',s:'4x10'}]},{day:'Tuesday',title:'Core',ex:[{id:'e2',n:'Plank',s:'3x60s'}]}];
+        const fbDt=[{id:'b',n:'Breakfast',cals:600,p:40,c:60,f:20,items:['Oats','Whey']}];
+
+        // MEMBER ENGINE
+        function initM() {
+            document.getElementById('m-user-name').innerText=currU.name; document.getElementById('m-plan-badge').innerText=(currU.plan||'PRO')+' PLAN';
+            document.querySelectorAll('#m-nav .nav-item').forEach(el=>{ el.onclick=()=>{
+                document.querySelectorAll('#m-nav .nav-item').forEach(n=>n.classList.remove('active')); el.classList.add('active');
+                document.getElementById('m-title').innerText=el.innerText;
+                document.querySelectorAll('#member-view .m-tab').forEach(t=>t.classList.remove('active'));
+                document.getElementById(el.getAttribute('data-tab')).classList.add('active');
+                if(el.getAttribute('data-tab')==='tab-overview') rMOverview(); if(el.getAttribute('data-tab')==='tab-progress') rMProg();
+            }}); rMOverview(); rMAtt(); rMWk(); rMDt(); rMProg(); rMShp();
+        }
+        async function rMOverview(){
+            let [user, att, prog, wk, dt] = await Promise.all([fetchA('/user/'+currU.id), fetchA('/attendance/'+currU.id), fetchA('/progress/'+currU.id), fetchA('/workout/'+currU.id), fetchA('/diet/'+currU.id)]);
+            let cWk = att.filter(a=>new Date(a.date).getMonth()===new Date().getMonth()).length;
+            document.getElementById('ov-workouts').innerText=cWk; let initW = user.weight || user.sw || 0; let w = prog.length?prog[prog.length-1].weight:initW;
+            document.getElementById('ov-weight').innerHTML=`${w}<span style="font-size:1rem;color:#888">kg</span>`;
+            let tgtW = user.targetWeight || user.tw || 0; let diff=Math.abs(initW-tgtW); let p=diff===0?100:(Math.abs(initW-w)/diff)*100; p=Math.min(100,p);
+            document.getElementById('ov-goal-perc').innerText=Math.round(p)+'%'; document.getElementById('ov-goal-bar').style.width=p+'%';
+            
+            let tp = wk.plan && wk.plan.days ? wk.plan.days : fbWk;
+            let td = new Date().toLocaleDateString('en-US',{weekday:'long'}); let pD=tp.find(x=>x.day===td);
+            let dE=0; if(pD){ pD.ex.forEach(e=>{if((wk.completed||{})[`${td}_${e.id}`]) dE++}); }
+            document.getElementById('ov-today-wk').innerHTML=pD?`<p>${pD.title}</p><p style="color:var(--accent)">${dE}/${pD.ex.length} Complete</p>`:'Rest Day';
+            let dtP = dt.plan && dt.plan.meals ? dt.plan.meals : fbDt;
+            let tc=0, ec=0; dtP.forEach(m=>{tc+=m.cals; if((dt.completed||{})[`${getToday()}_${m.id}`]) ec+=m.cals;});
+            document.getElementById('ov-today-dt').innerHTML=`<p>Consumed</p><p style="color:var(--success)">${ec} / ${tc} kcal</p>`;
+        }
+        async function mCheckIn(){ await fetchA('/attendance/checkin','POST',{userId:currU.id,date:getToday()}); showToast('Checked in!'); rMAtt(); rMOverview(); }
+        async function rMAtt(){
+            let att = await fetchA('/attendance/'+currU.id); let chk = {}; att.forEach(a=>chk[a.date]=true);
+            let cal = document.getElementById('m-cal'); cal.innerHTML = ['S','M','T','W','T','F','S'].map(d=>`<div class="cal-day hd">${d}</div>`).join('');
+            let n = new Date(); let y=n.getFullYear(); let m=n.getMonth(); let dp=0;
+            let fd = new Date(y,m,1).getDay(); let ds = new Date(y,m+1,0).getDate();
+            for(let i=0;i<fd;i++) cal.innerHTML+='<div></div>';
+            for(let i=1;i<=ds;i++){ let dt=`${y}-${String(m+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`; let c='cal-day';
+                if(chk[dt]){c+=' p'; dp++;} else if(new Date(dt)<new Date(getToday())){c+=' a';} if(dt===getToday()&&!chk[dt]) c+=' td'; cal.innerHTML+=`<div class="${c}">${i}</div>`;
+            }
+            document.getElementById('att-p').innerText=dp; document.getElementById('att-r').innerText=Math.round((dp/ds)*100)+'%';
+            if(chk[getToday()]){let b=document.getElementById('btn-checkin'); b.disabled=true; b.innerText='Checked In ✓'; b.classList.add('btn-outline');}
+        }
+        async function rMWk(){
+            let data = await fetchA('/workout/'+currU.id); let tp = data.plan && data.plan.days ? data.plan.days : fbWk;
+            let lst = document.getElementById('workout-list'); lst.innerHTML=''; let td = new Date().toLocaleDateString('en-US',{weekday:'long'});
+            let comp = data.completed||{};
+            tp.forEach(d=>{
+                let iT = d.day===td; let tE=d.ex.length; let dE=0;
+                let html = d.ex.map(e=>{ let isD=comp[`${d.day}_${e.id}`]; if(isD&&iT) dE++;
+                    return `<div class="ex-item ${isD?'done':''}"><input type="checkbox" class="ex-checkbox" ${isD?'checked':''} ${!iT?'disabled':''} onchange="markW('${d.day}','${e.id}',this.checked)"><div style="flex:1"><h4 style="margin:0">${e.n}</h4><span style="font-size:0.9rem;color:#888">${e.s}</span></div></div>`;
+                }).join('');
+                let allD = iT && dE===tE && tE>0;
+                lst.innerHTML += `<div class="expandable ${iT?'open':''} ${allD?'all-done':''}"><div class="exp-header" onclick="this.parentElement.classList.toggle('open')"><div><span style="color:${iT?'var(--accent)':'inherit'}">${d.day} - ${d.title||'Training'}</span></div><div><span class="badge-done">DONE</span> <span style="color:var(--accent)">+</span></div></div><div class="exp-content">${html}</div></div>`;
+            });
+        }
+        async function markW(day, exId, isDone){ await fetchA('/workout/complete','POST',{userId:currU.id, day, exId, isDone}); rMWk(); rMOverview(); }
+        async function rMDt(){
+            let data=await fetchA('/diet/'+currU.id); let dtP = data.plan && data.plan.meals ? data.plan.meals : fbDt;
+            let comp=data.completed||{}; let td=getToday(); let tc=0, ec=0, tp=0, tcC=0, tf=0;
+            let lst = document.getElementById('diet-meals'); lst.innerHTML='';
+            dtP.forEach(m=>{
+                tc+=m.cals; let iE=comp[`${td}_${m.id}`]; if(iE){ec+=m.cals; tp+=m.p; tcC+=m.c; tf+=m.f;}
+                lst.innerHTML+=`<div class="card" style="opacity:${iE?'0.6':'1'};border-color:${iE?'var(--success)':'var(--border)'}"><h3 style="color:var(--accent);font-size:1.8rem">${m.n} ${iE?'<span style="color:var(--success)">✓</span>':''}</h3><p style="color:#888">${m.cals} kcal | P:${m.p} C:${m.c} F:${m.f}</p><ul class="meal-list">${m.items.map(i=>`<li>${i}</li>`).join('')}</ul><button class="btn btn-outline" style="width:100%;margin-top:1rem" onclick="markD('${m.id}',${!iE})">${iE?'Undo':'Eaten'}</button></div>`;
+            });
+            document.getElementById('diet-tot').innerText=tc; document.getElementById('diet-eaten').innerText=ec;
+            document.getElementById('mac-p').innerText=tp; document.getElementById('mac-c').innerText=tcC; document.getElementById('mac-f').innerText=tf;
+            document.getElementById('mac-p-bar').style.width=Math.min(100,(tp/150)*100)+'%'; document.getElementById('mac-c-bar').style.width=Math.min(100,(tcC/250)*100)+'%'; document.getElementById('mac-f-bar').style.width=Math.min(100,(tf/80)*100)+'%';
+        }
+        async function markD(mealId, isEaten){ await fetchA('/diet/eaten','POST',{userId:currU.id,date:getToday(),mealId,isEaten}); rMDt(); rMOverview(); }
+        async function logProgress(e){ e.preventDefault(); await fetchA('/progress/log','POST',{userId:currU.id, date:getToday(), weight:document.getElementById('p-weight').value, notes:document.getElementById('p-notes').value}); showToast('Progress logged'); e.target.reset(); rMProg(); rMOverview(); }
+        async function rMProg(){
+            let [u, pr] = await Promise.all([fetchA('/user/'+currU.id), fetchA('/progress/'+currU.id)]);
+            document.getElementById('prog-sw').innerText=`Start: ${u.weight||u.sw||0} kg`; document.getElementById('prog-tw').innerText=`${u.targetWeight||u.tw||0} kg`;
+            document.querySelector('#prog-list tbody').innerHTML=pr.slice().reverse().map(p=>`<tr><td style="color:#888">${p.date}</td><td style="color:var(--accent)">${p.weight}kg</td><td>${p.notes||'--'}</td></tr>`).join('');
+            let s = document.getElementById('prog-chart'); s.innerHTML='';
+            if(pr.length>1){ let ma=Math.max(...pr.map(x=>x.weight))+2; let mi=Math.min(...pr.map(x=>x.weight))-2; let r=ma-mi; let st=100/(pr.length-1); let pt='';
+                pr.forEach((p,i)=>{let px=i*st; let py=100-(((p.weight-mi)/r)*100); pt+=`${px},${py} `; s.innerHTML+=`<circle cx="${px}%" cy="${py}%" r="4" fill="var(--accent)"/>`;});
+                s.innerHTML=`<polyline points="${pt}" fill="none" stroke="var(--accent)" stroke-width="2"/>`+s.innerHTML; }
+        }
+        async function rMShp(){ let p=await fetchA('/products'); document.getElementById('shop-grid').innerHTML=p.map(i=>`<div class="card" style="text-align:center"><div style="font-size:3rem;margin:1rem">${i.icon}</div><h3>${i.name}</h3><div style="color:var(--accent);font-family:var(--font-head);font-size:1.5rem">₹${i.price}</div><button class="btn btn-outline" style="width:100%;margin-top:1rem" onclick="aC('${i.name}',${i.price})">Add</button></div>`).join(''); }
+        function aC(n,p){ let e=cCart.find(c=>c.n===n); if(e) e.q++; else cCart.push({n,p,q:1}); uCB(); showToast('Added to cart'); }
+        function uCQ(n,d){ let e=cCart.find(c=>c.n===n); if(e){e.q+=d; if(e.q<=0) cCart=cCart.filter(c=>c.n!==n);} uCB(); rC(); }
+        function uCB(){ let c=cCart.reduce((a,b)=>a+b.q,0); document.getElementById('nav-cart-badge').innerText=c; document.getElementById('cart-t-num').innerText=c; }
+        function toggleCart(){ document.getElementById('cart-panel').classList.toggle('open'); rC(); }
+        function rC(){ let t=0; document.getElementById('cart-items').innerHTML=cCart.map(c=>{t+=(c.p*c.q); return `<div class="cart-item"><div><h4>${c.n}</h4><span style="color:var(--accent)">₹${c.p}</span></div><div><button class="btn-outline" onclick="uCQ('${c.n}',-1)">-</button> ${c.q} <button class="btn-outline" onclick="uCQ('${c.n}',1)">+</button></div></div>`}).join(''); document.getElementById('cart-items').innerHTML+=cCart.length?`<div style="text-align:right;font-family:var(--font-head);font-size:1.5rem;color:var(--accent);margin-top:1rem">Total: ₹${t}</div>`:`<p style="color:#888;text-align:center">Empty.</p>`; }
+        async function checkoutCart(){ if(!cCart.length) return; await fetchA('/cart/checkout','POST',{userId:currU.id,items:cCart}); cCart=[]; uCB(); toggleCart(); showToast('Checkout completed'); }
+
+        // TRAINER ENGINE
+        let tbMems = [];
+        function initT(){
+            document.getElementById('t-name').innerText=currU.name;
+            document.querySelectorAll('#t-nav .nav-item').forEach(el=>{ el.onclick=()=>{
+                document.querySelectorAll('#t-nav .nav-item').forEach(n=>n.classList.remove('active')); el.classList.add('active');
+                document.getElementById('t-title').innerText=el.innerText;
+                document.querySelectorAll('#trainer-view .t-tab').forEach(t=>t.classList.remove('active'));
+                document.getElementById(el.getAttribute('data-tab')).classList.add('active');
+            }}); rTOver(); rTAtt(); rTMems();
+        }
+        async function rTOver(){
+            let [st, ms] = await Promise.all([fetchA('/trainer/stats'), fetchA('/trainer/members')]);
+            document.getElementById('to-tot').innerText=st.totalMembers; document.getElementById('to-chk').innerText=st.checkedInToday; document.getElementById('to-avg').innerText=st.avgAtt+'%'; document.getElementById('to-ses').innerText=st.trainerSessions;
+            let tb = document.querySelector('#t-attn-table tbody'); tb.innerHTML='';
+            ms.forEach(m=>{ let f=''; let lsDays=m.lastSeen?(new Date()-new Date(m.lastSeen))/(1000*3600*24):99;
+                if(!m.hasWk) f='No Workout Plan'; else if(!m.hasDt) f='No Diet Plan'; else if(lsDays>=5) f='Missing 5+ Days';
+                if(f) tb.innerHTML+=`<tr><td>${m.name}</td><td><span class="badge b-warn">${f}</span></td><td>${m.lastSeen||'--'}</td><td><button class="btn btn-outline" style="padding:4px 8px;font-size:0.8rem" onclick="showToast('Reminder sent')">Nudge</button> <button class="btn" style="padding:4px 8px;font-size:0.8rem" onclick="nav2A('${m.id}')">Assign</button></td></tr>`;
+            });
+            document.getElementById('form-sel-mem').innerHTML=ms.map(m=>`<option value="${m.id}">${m.name}</option>`).join(''); tbMems=ms;
+        }
+        function nav2A(id){ document.querySelector('[data-tab="t-assign"]').click(); document.getElementById('form-sel-mem').value=id; }
+
+        async function rTAtt(){
+            let att = await fetchA('/trainer/attendance/'+currU.id); let td=getToday();
+            let cInn = att.filter(a=>a.type==='clockin'&&a.date===td).length; let cOut = att.filter(a=>a.type==='clockout'&&a.date===td).length;
+            let iC = cInn > cOut; let b = document.getElementById('btn-tclock'); b.innerText=iC?'Clock Out':'Clock In'; b.className=iC?'btn btn-danger':'btn';
+            
+            let dtM={}; let dp=0; att.forEach(a=>{ if(!dtM[a.date]) dtM[a.date]={i:null,o:null,h:0}; if(a.type==='clockin') dtM[a.date].i=a.ts; if(a.type==='clockout') dtM[a.date].o=a.ts; if(dtM[a.date].i && dtM[a.date].o) dtM[a.date].h=((dtM[a.date].o-dtM[a.date].i)/(1000*3600)).toFixed(1); });
+            for(let k in dtM){ if(dtM[k].h>0.1) dp++; } document.getElementById('t-spen').innerText=dp;
+                        
+            let cl=document.getElementById('t-cal'); cl.innerHTML=['S','M','T','W','T','F','S'].map(d=>`<div class="cal-day hd">${d}</div>`).join('');
+            let y=new Date().getFullYear(); let m=new Date().getMonth(); let fd=new Date(y,m,1).getDay(); let ds=new Date(y,m+1,0).getDate();
+            for(let i=0;i<fd;i++) cl.innerHTML+='<div></div>'; let th=0;
+            for(let i=1;i<=ds;i++){ let dx=`${y}-${String(m+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+                let c='cal-day'; if(dtM[dx]){c+=' p'; th+=parseFloat(dtM[dx].h||0);} cl.innerHTML+=`<div class="${c}">${i}</div>`;
+            } document.getElementById('t-shrs').innerText=th;
+            document.getElementById('t-shift-log').innerHTML=Object.keys(dtM).reverse().map(k=>`<tr><td>${k}</td><td>${dtM[k].i?new Date(dtM[k].i).toLocaleTimeString():'--'}</td><td>${dtM[k].o?new Date(dtM[k].o).toLocaleTimeString():'--'}</td><td style="color:var(--accent)">${dtM[k].h} hrs</td></tr>`).join('');
+        }
+        async function tClockAct(t){ await fetchA('/trainer/attendance','POST',{trainerId:currU.id, type:t, date:getToday(), ts:Date.now()}); showToast(`Clocked ${t==='clockin'?'in':'out'}`); rTAtt(); }
+
+        async function rTMems(){ tbMems = await fetchA('/trainer/members'); filterMembers(); }
+        function filterMembers(){
+            let q=document.getElementById('search-mem').value.toLowerCase(); let f=document.getElementById('filter-mem').value;
+            let tb=document.getElementById('t-mem-tbody'); tb.innerHTML='';
+            let fd = tbMems.filter(m=>{
+                if(q && !m.name.toLowerCase().includes(q)) return false;
+                let msDays=(new Date()-new Date(m.lastSeen||0))/(1000*3600*24); let rDays=(new Date()-new Date(m.reg||0))/(1000*3600*24);
+                let st = rDays<=7?'New':(msDays<=3?'Active':(msDays>=5?'Inactive':'Active'));
+                if(f==='Active'&&st!=='Active') return false; if(f==='Inactive'&&st!=='Inactive') return false; if(f==='No Plan'&&m.hasWk&&m.hasDt) return false;
+                m._c=st==='Active'?'green':st==='Inactive'?'red':'warn'; m._st=st; return true;
+            });
+            if(!fd.length) return document.getElementById('t-mem-empty').style.display='block'; document.getElementById('t-mem-empty').style.display='none';
+            fd.forEach(m=>{ tb.innerHTML+=`<tr class="clickable" onclick="document.getElementById('exp-${m.id}').classList.toggle('open')"><td><b>${m.name}</b></td><td><span class="badge b-green">${m.plan||'Basic'}</span></td><td>${Math.min(100, Math.round((m.attCount/30)*100))}%</td><td>${m.lastSeen||'Never'}</td><td>${m.hasWk&&m.hasDt?'Assigned':'Missing'}</td><td><span class="badge b-${m._c}">${m._st}</span></td></tr><tr class="expand-row" id="exp-${m.id}"><td colspan="6"><div class="expand-content"><div style="flex:1"><h4>Profile & Goals</h4><p style="color:#888;margin-bottom:1rem">Target: ${m.targetWeight||m.tw||0}kg</p><button class="btn btn-outline" style="font-size:0.8rem;padding:4px 8px" onclick="nav2A('${m.id}')">Configure Plans</button></div></div></td></tr>`; });
+        }
+
+        async function saveWkPlan(){
+            let tb=document.getElementById('fw-type'); let nm=document.getElementById('form-sel-mem').options[document.getElementById('form-sel-mem').selectedIndex].text;
+            await fetchA('/trainer/assign/workout','POST',{memberId:document.getElementById('form-sel-mem').value, planType:tb.value, frequency:document.getElementById('fw-freq').value, notes:document.getElementById('fw-notes').value}); showToast(`Assigned ${tb.value} to ${nm}`); rTMems(); rTOver();
+        }
+        async function saveDietPlan(){
+            let p=+document.getElementById('fd-p').value; let c=+document.getElementById('fd-c').value; let f=+document.getElementById('fd-f').value;
+            if((p+c+f)!==100) return showToast('Macros must equal 100!', true); let nm=document.getElementById('form-sel-mem').options[document.getElementById('form-sel-mem').selectedIndex].text;
+            await fetchA('/trainer/assign/diet','POST',{memberId:document.getElementById('form-sel-mem').value, goal:document.getElementById('fd-gl').value, calories:document.getElementById('fd-cals').value, restrictions:document.getElementById('fd-rest').value, macros:{p,c,f}}); showToast(`Assigned diet to ${nm}`); rTMems(); rTOver();
+        }
+    </script>
+</body>
+</html>
