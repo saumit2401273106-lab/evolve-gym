@@ -191,51 +191,57 @@ app.post('/api/trainer/attendance', trainerOnly, (req, res) => {
 });
 
 app.post('/api/trainer/assign/workout', trainerOnly, (req, res) => {
-    try {
-        let { memberId, planType, frequency, notes } = req.body
-        let days = []
-        if(planType.includes('Hypertrophy') || planType.includes('Powerlifting')) {
-            days = [
-                { day:'Monday', title:'Push', ex:[{id:'e1',n:'Bench Press',s:'4x10'},{id:'e2',n:'Incline Press',s:'3x12'},{id:'e3',n:'Tricep Dips',s:'3x15'}] },
-                { day:'Tuesday', title:'Pull', ex:[{id:'e4',n:'Barbell Rows',s:'4x10'},{id:'e5',n:'Pull Ups',s:'3x8'},{id:'e6',n:'Bicep Curls',s:'3x12'}] },
-                { day:'Thursday', title:'Legs', ex:[{id:'e7',n:'Squats',s:'4x8'},{id:'e8',n:'Leg Press',s:'3x12'},{id:'e9',n:'Calf Raises',s:'3x15'}] },
-                { day:'Friday', title:'Shoulders', ex:[{id:'e10',n:'Overhead Press',s:'4x10'},{id:'e11',n:'Lateral Raises',s:'3x12'}] },
-                { day:'Saturday', title:'Cardio', ex:[{id:'e12',n:'Treadmill',s:'20 mins'},{id:'e13',n:'Cycling',s:'15 mins'}] }
-            ]
-        } else {
-            days = [
-                { day:'Monday', title:'Full Body', ex:[{id:'e1',n:'Jogging',s:'15 mins'},{id:'e2',n:'Burpees',s:'3x10'},{id:'e3',n:'Push Ups',s:'3x15'}] },
-                { day:'Wednesday', title:'Cardio', ex:[{id:'e4',n:'Cycling',s:'20 mins'},{id:'e5',n:'Jump Rope',s:'10 mins'}] },
-                { day:'Friday', title:'Core', ex:[{id:'e6',n:'Plank',s:'3x60s'},{id:'e7',n:'Crunches',s:'3x20'},{id:'e8',n:'Leg Raises',s:'3x15'}] }
-            ]
-        }
-        db.get('users').find({ id: memberId }).assign({ workoutPlan: { type: planType, freq: frequency, notes, days } }).write()
-        res.json({ success: true })
-    } catch(err) {
-        res.status(500).json({ error: err.message })
+  try {
+    let { memberId, planType, frequency, notes } = req.body
+    let days = []
+    if(planType.includes('Hypertrophy') || planType.includes('Powerlifting')) {
+      days = [
+        { day:'Monday', title:'Chest & Triceps', ex:[{id:'e1',n:'Bench Press',s:'4x10'},{id:'e2',n:'Incline Press',s:'3x12'},{id:'e3',n:'Cable Flyes',s:'3x15'},{id:'e4',n:'Tricep Dips',s:'3x12'},{id:'e5',n:'Tricep Pushdown',s:'3x15'}] },
+        { day:'Tuesday', title:'Back & Biceps', ex:[{id:'e6',n:'Deadlift',s:'4x8'},{id:'e7',n:'Barbell Rows',s:'4x10'},{id:'e8',n:'Pull Ups',s:'3x8'},{id:'e9',n:'Bicep Curls',s:'3x12'},{id:'e10',n:'Hammer Curls',s:'3x12'}] },
+        { day:'Wednesday', title:'Legs', ex:[{id:'e11',n:'Squats',s:'4x8'},{id:'e12',n:'Leg Press',s:'3x12'},{id:'e13',n:'Lunges',s:'3x10'},{id:'e14',n:'Leg Curls',s:'3x12'},{id:'e15',n:'Calf Raises',s:'4x15'}] },
+        { day:'Thursday', title:'Shoulders', ex:[{id:'e16',n:'Overhead Press',s:'4x10'},{id:'e17',n:'Lateral Raises',s:'3x12'},{id:'e18',n:'Front Raises',s:'3x12'},{id:'e19',n:'Shrugs',s:'3x15'},{id:'e20',n:'Face Pulls',s:'3x15'}] },
+        { day:'Friday', title:'Core & Cardio', ex:[{id:'e21',n:'Plank',s:'3x60s'},{id:'e22',n:'Crunches',s:'3x20'},{id:'e23',n:'Leg Raises',s:'3x15'},{id:'e24',n:'Russian Twists',s:'3x20'},{id:'e25',n:'Treadmill',s:'20 mins'}] },
+        { day:'Saturday', title:'Full Body', ex:[{id:'e26',n:'Deadlift',s:'3x8'},{id:'e27',n:'Push Ups',s:'3x15'},{id:'e28',n:'Pull Ups',s:'3x10'},{id:'e29',n:'Goblet Squats',s:'3x12'},{id:'e30',n:'Farmer Walk',s:'3x30s'}] }
+      ]
+    } else {
+      days = [
+        { day:'Monday', title:'Full Body & Cardio', ex:[{id:'e1',n:'Jogging',s:'15 mins'},{id:'e2',n:'Burpees',s:'3x10'},{id:'e3',n:'Push Ups',s:'3x15'},{id:'e4',n:'Squats',s:'3x12'},{id:'e5',n:'Plank',s:'3x30s'}] },
+        { day:'Tuesday', title:'Upper Body', ex:[{id:'e6',n:'Dumbbell Press',s:'3x12'},{id:'e7',n:'Rows',s:'3x12'},{id:'e8',n:'Shoulder Press',s:'3x12'},{id:'e9',n:'Bicep Curls',s:'3x15'},{id:'e10',n:'Tricep Dips',s:'3x15'}] },
+        { day:'Wednesday', title:'Cardio', ex:[{id:'e11',n:'Cycling',s:'20 mins'},{id:'e12',n:'Jump Rope',s:'10 mins'},{id:'e13',n:'Mountain Climbers',s:'3x20'},{id:'e14',n:'High Knees',s:'3x30s'},{id:'e15',n:'Cool Down Stretch',s:'10 mins'}] },
+        { day:'Thursday', title:'Lower Body', ex:[{id:'e16',n:'Squats',s:'3x15'},{id:'e17',n:'Lunges',s:'3x12'},{id:'e18',n:'Glute Bridges',s:'3x15'},{id:'e19',n:'Calf Raises',s:'3x20'},{id:'e20',n:'Leg Raises',s:'3x15'}] },
+        { day:'Friday', title:'Core & Flexibility', ex:[{id:'e21',n:'Plank',s:'3x60s'},{id:'e22',n:'Crunches',s:'3x20'},{id:'e23',n:'Russian Twists',s:'3x20'},{id:'e24',n:'Yoga Stretch',s:'10 mins'},{id:'e25',n:'Meditation',s:'5 mins'}] },
+        { day:'Saturday', title:'Active Recovery', ex:[{id:'e26',n:'Walking',s:'30 mins'},{id:'e27',n:'Light Stretching',s:'15 mins'},{id:'e28',n:'Foam Rolling',s:'10 mins'},{id:'e29',n:'Breathing Exercise',s:'5 mins'},{id:'e30',n:'Hydration Check',s:'Throughout day'}] }
+      ]
     }
-});
+    db.get('users').find({ id: memberId }).assign({ workoutPlan: { type: planType, freq: frequency, notes, days } }).write()
+    res.json({ success: true })
+  } catch(err) {
+    console.error(err)
+    res.status(500).json({ error: err.message })
+  }
+})
 
 app.post('/api/trainer/assign/diet', trainerOnly, (req, res) => {
-    try {
-        let { memberId, goal, calories, restrictions, macros } = req.body
-        let bCal = Math.round(calories * 0.35)
-        let lCal = Math.round(calories * 0.40)
-        let dCal = calories - bCal - lCal
-        let plan = {
-            goal, cals: calories, restrict: restrictions, m: macros,
-            meals: [
-                { id:'b', n:'Breakfast', cals:bCal, p: Math.round(macros.p*0.3), c: Math.round(macros.c*0.4), f: Math.round(macros.f*0.3), items:['Oats with milk','Boiled eggs','Banana','Green tea'] },
-                { id:'l', n:'Lunch', cals:lCal, p: Math.round(macros.p*0.4), c: Math.round(macros.c*0.4), f: Math.round(macros.f*0.4), items:['Brown rice','Grilled chicken','Mixed salad','Lemon water'] },
-                { id:'d', n:'Dinner', cals:dCal, p: Math.round(macros.p*0.3), c: Math.round(macros.c*0.2), f: Math.round(macros.f*0.3), items:['Roti','Dal','Vegetables','Curd'] }
-            ]
-        }
-        db.get('users').find({ id: memberId }).assign({ dietPlan: plan }).write()
-        res.json({ success: true })
-    } catch(err) {
-        res.status(500).json({ error: err.message })
+  try {
+    let { memberId, goal, calories, restrictions, macros } = req.body
+    let bCal = Math.round(calories * 0.35)
+    let lCal = Math.round(calories * 0.40)
+    let dCal = calories - bCal - lCal
+    let plan = {
+      goal, cals: calories, restrict: restrictions, m: macros,
+      meals: [
+        { id:'b', n:'Breakfast', cals:bCal, items:['Oats with milk','3 Boiled eggs','Banana','Green tea','Almonds'] },
+        { id:'l', n:'Lunch', cals:lCal, items:['Brown rice','Grilled chicken 200g','Mixed salad','Dal','Lemon water'] },
+        { id:'d', n:'Dinner', cals:dCal, items:['Roti 3 pieces','Paneer curry','Vegetables','Curd','Cucumber salad'] }
+      ]
     }
-});
+    db.get('users').find({ id: memberId }).assign({ dietPlan: plan }).write()
+    res.json({ success: true })
+  } catch(err) {
+    console.error(err)
+    res.status(500).json({ error: err.message })
+  }
+})
 
 app.get('/api/trainer/stats', trainerOnly, (req, res) => {
     let td = new Date().toLocaleDateString('en-CA');

@@ -191,6 +191,25 @@
             </div>
 
             <div id="tab-progress" class="tab-pane m-tab">
+                <div class="grid grid-3" style="margin-bottom:2rem;">
+                    <div class="card">
+                        <h4 style="color:var(--text-muted)">Weight Goal</h4>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem">
+                            <span id="g-w-curr">--</span> <span id="g-w-tgt" style="color:var(--accent)">--</span>
+                        </div>
+                        <div class="p-bar"><div class="p-fill" id="g-w-bar" style="width:0%"></div></div>
+                        <p style="font-size:0.8rem; color:#888; margin-top:0.5rem">Start: <span id="g-w-start">--</span></p>
+                    </div>
+                    <div class="card">
+                        <h4 style="color:var(--text-muted)">Attendance Goal</h4>
+                        <div style="font-size:2rem; font-family:var(--font-head); margin:0.5rem 0"><span id="g-a-curr">0</span> / 30 Days</div>
+                        <div class="p-bar"><div class="p-fill" id="g-a-bar" style="width:0%; background:var(--success)"></div></div>
+                    </div>
+                    <div class="card">
+                        <h4 style="color:var(--text-muted)">Streak Goal</h4>
+                        <div style="font-size:2rem; font-family:var(--font-head); margin:0.5rem 0; color:var(--warn)"><span id="g-s-curr">0</span> <span style="font-size:1rem;color:#888">Days🔥</span></div>
+                    </div>
+                </div>
                 <div class="grid grid-2" style="margin-bottom:2rem;">
                     <div class="card"><h3 style="color:var(--accent); margin-bottom:1rem;">Log Progress</h3>
                         <form onsubmit="logProgress(event)"><input type="number" step="0.1" id="p-weight" class="form-control" required placeholder="Weight (kg)"><input type="text" id="p-notes" class="form-control" placeholder="Notes"><button type="submit" class="btn" style="width:100%">Save Entry</button></form></div>
@@ -258,15 +277,16 @@
             </div>
 
             <div id="t-assign" class="tab-pane t-tab">
-                <div class="card" style="margin-bottom:2rem; border-color:var(--accent);"><label>Select Member</label><select class="form-control" id="form-sel-mem" style="max-width:400px; margin:0;"></select></div>
                 <div class="grid grid-2">
                     <div class="card"><h3 style="color:var(--accent); margin-bottom:1.5rem">Assign Workout</h3>
+                        <label>Select Member</label><select class="form-control" id="workoutMemberDropdown"></select>
                         <label>Plan Type</label><select class="form-control" id="fw-type"><option>Strength and Hypertrophy</option><option>Fat Loss Circuit</option><option>Beginner Foundation</option><option>Advanced Powerlifting</option></select>
                         <label>Frequency</label><select class="form-control" id="fw-freq"><option>3 days per week</option><option>4 days per week</option><option>5 days per week</option></select>
                         <label>Trainer Notes</label><textarea class="form-control" id="fw-notes" rows="2"></textarea>
                         <button class="btn" onclick="saveWkPlan()" style="width:100%">Deploy Workout Plan</button>
                     </div>
                     <div class="card"><h3 style="color:var(--accent); margin-bottom:1.5rem">Assign Diet</h3>
+                        <label>Select Member</label><select class="form-control" id="dietMemberDropdown"></select>
                         <label>Goal</label><select class="form-control" id="fd-gl"><option>Fat Loss</option><option>Muscle Gain</option><option>Maintenance</option><option>Recomposition</option></select>
                         <label>Daily Calorie Target</label><input type="number" class="form-control" id="fd-cals">
                         <label>Restrictions</label><input type="text" class="form-control" id="fd-rest">
@@ -285,7 +305,7 @@
         const logout = () => { sessionStorage.clear(); location.reload(); };
 
         let currU = null; let rle='member'; let cCart=[]; 
-        function setRole(r){ rle=r; document.getElementById('btn-rm').classList.toggle('active', r==='member'); document.getElementById('btn-rt').classList.toggle('active', r==='trainer'); document.getElementById('login-em').value = r==='trainer'?'trainer@evolve.com':'member@evolve.com'; document.getElementById('login-pw').value = r==='trainer'?'trainer123':'123'; }
+        function setRole(r){ rle=r; document.getElementById('btn-rm').classList.toggle('active', r==='member'); document.getElementById('btn-rt').classList.toggle('active', r==='trainer'); document.getElementById('login-em').value = r==='trainer'?'trainer@evolve.com':'member@evolve.com'; document.getElementById('login-pw').value = r==='trainer'?'trainer123':'member123'; }
 
         const fetchA = async (p, m='GET', b=null) => {
             document.getElementById('spinner').style.display='flex';
@@ -384,8 +404,19 @@
         };
 
         // Fallback plans if db is empty for mapping arrays
-        const fbWk=[{day:'Monday',title:'Push & Legs',ex:[{id:'e1',n:'Bench Press',s:'4x10'}]},{day:'Tuesday',title:'Core',ex:[{id:'e2',n:'Plank',s:'3x60s'}]}];
-        const fbDt=[{id:'b',n:'Breakfast',cals:600,p:40,c:60,f:20,items:['Oats','Whey']}];
+        const fbWk=[
+            {day:'Monday',title:'Chest and Triceps',ex:[{id:'e1',n:'Bench Press',s:'4x10'},{id:'e2',n:'Incline Press',s:'3x12'},{id:'e3',n:'Cable Flyes',s:'3x15'},{id:'e4',n:'Tricep Dips',s:'3x12'},{id:'e5',n:'Tricep Pushdown',s:'3x15'}]},
+            {day:'Tuesday',title:'Back and Biceps',ex:[{id:'e6',n:'Deadlift',s:'4x8'},{id:'e7',n:'Barbell Rows',s:'4x10'},{id:'e8',n:'Pull Ups',s:'3x8'},{id:'e9',n:'Bicep Curls',s:'3x12'},{id:'e10',n:'Hammer Curls',s:'3x12'}]},
+            {day:'Wednesday',title:'Legs',ex:[{id:'e11',n:'Squats',s:'4x8'},{id:'e12',n:'Leg Press',s:'3x12'},{id:'e13',n:'Lunges',s:'3x10'},{id:'e14',n:'Leg Curls',s:'3x12'},{id:'e15',n:'Calf Raises',s:'4x15'}]},
+            {day:'Thursday',title:'Shoulders',ex:[{id:'e16',n:'Overhead Press',s:'4x10'},{id:'e17',n:'Lateral Raises',s:'3x12'},{id:'e18',n:'Front Raises',s:'3x12'},{id:'e19',n:'Shrugs',s:'3x15'},{id:'e20',n:'Face Pulls',s:'3x15'}]},
+            {day:'Friday',title:'Core and Cardio',ex:[{id:'e21',n:'Plank',s:'3x60s'},{id:'e22',n:'Crunches',s:'3x20'},{id:'e23',n:'Leg Raises',s:'3x15'},{id:'e24',n:'Russian Twists',s:'3x20'},{id:'e25',n:'Treadmill',s:'20 mins'}]},
+            {day:'Saturday',title:'Full Body',ex:[{id:'e26',n:'Deadlift',s:'3x8'},{id:'e27',n:'Push Ups',s:'3x15'},{id:'e28',n:'Pull Ups',s:'3x10'},{id:'e29',n:'Goblet Squats',s:'3x12'},{id:'e30',n:'Farmer Walk',s:'3x30s'}]}
+        ];
+        const fbDt=[
+            {id:'b',n:'Breakfast',cals:550,p:25,c:65,f:15,items:['Oats with milk','3 Boiled eggs','Banana','Green tea','Almonds']},
+            {id:'l',n:'Lunch',cals:750,p:45,c:85,f:20,items:['Brown rice','Grilled chicken 200g','Mixed salad','Dal','Lemon water']},
+            {id:'d',n:'Dinner',cals:600,p:30,c:70,f:20,items:['Roti 3 pieces','Paneer curry','Vegetables','Curd','Cucumber salad']}
+        ];
 
         // MEMBER ENGINE
         function initM() {
@@ -456,13 +487,44 @@
         async function markD(mealId, isEaten){ await fetchA('/diet/eaten','POST',{userId:currU.id,date:getToday(),mealId,isEaten}); rMDt(); rMOverview(); }
         async function logProgress(e){ e.preventDefault(); await fetchA('/progress/log','POST',{userId:currU.id, date:getToday(), weight:document.getElementById('p-weight').value, notes:document.getElementById('p-notes').value}); showToast('Progress logged'); e.target.reset(); rMProg(); rMOverview(); }
         async function rMProg(){
-            let [u, pr] = await Promise.all([fetchA('/user/'+currU.id), fetchA('/progress/'+currU.id)]);
-            document.getElementById('prog-sw').innerText=`Start: ${u.weight||u.sw||0} kg`; document.getElementById('prog-tw').innerText=`${u.targetWeight||u.tw||0} kg`;
+            let [u, pr, att] = await Promise.all([fetchA('/user/'+currU.id), fetchA('/progress/'+currU.id), fetchA('/attendance/'+currU.id)]);
+            let sW = u.weight||u.sw||0; let tW = u.targetWeight||u.tw||0; let cW = pr.length?pr[pr.length-1].weight:sW;
+            document.getElementById('prog-sw').innerText=`Start: ${sW} kg`; document.getElementById('prog-tw').innerText=`${tW} kg`;
+            document.getElementById('g-w-curr').innerText=`${cW}kg`; document.getElementById('g-w-tgt').innerText=`${tW}kg Target`; document.getElementById('g-w-start').innerText=`${sW}kg`;
+            let diff=Math.abs(sW-tW); let wp=diff===0?100:(Math.abs(sW-cW)/diff)*100; wp=Math.min(100,Math.max(0,wp));
+            document.getElementById('g-w-bar').style.width=wp+'%';
+            
+            let aC = att.length; document.getElementById('g-a-curr').innerText=aC;
+            document.getElementById('g-a-bar').style.width=Math.min(100,(aC/30)*100)+'%';
+            
+            let str=0; let td = new Date(); td.setHours(0,0,0,0); let attM={}; att.forEach(a=>attM[a.date]=true);
+            for(let i=0;;i++){ let d=new Date(td); d.setDate(d.getDate()-i); let ds=d.toLocaleDateString('en-CA');
+                if(i===0 && !attM[ds]) continue;
+                if(!attM[ds]) { if(i>0) break; } else str++;
+            }
+            document.getElementById('g-s-curr').innerText=str;
+
             document.querySelector('#prog-list tbody').innerHTML=pr.slice().reverse().map(p=>`<tr><td style="color:#888">${p.date}</td><td style="color:var(--accent)">${p.weight}kg</td><td>${p.notes||'--'}</td></tr>`).join('');
-            let s = document.getElementById('prog-chart'); s.innerHTML='';
-            if(pr.length>1){ let ma=Math.max(...pr.map(x=>x.weight))+2; let mi=Math.min(...pr.map(x=>x.weight))-2; let r=ma-mi; let st=100/(pr.length-1); let pt='';
-                pr.forEach((p,i)=>{let px=i*st; let py=100-(((p.weight-mi)/r)*100); pt+=`${px},${py} `; s.innerHTML+=`<circle cx="${px}%" cy="${py}%" r="4" fill="var(--accent)"/>`;});
-                s.innerHTML=`<polyline points="${pt}" fill="none" stroke="var(--accent)" stroke-width="2"/>`+s.innerHTML; }
+            let s = document.getElementById('prog-chart'); s.setAttribute('viewBox', '0 0 100 100'); s.innerHTML='';
+            let chartData = pr.slice(-10);
+            if(chartData.length>1){ 
+                let ma=Math.max(...chartData.map(x=>x.weight))+2; 
+                let mi=Math.min(...chartData.map(x=>x.weight))-2; 
+                let r=ma-mi; 
+                let st=100/(chartData.length-1); 
+                let pt='';
+                s.innerHTML += `<rect x="10" y="10" width="85" height="80" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>`;
+                s.innerHTML += `<text x="2" y="15" fill="#888" font-size="4">${Math.round(ma)}kg</text>`;
+                s.innerHTML += `<text x="2" y="90" fill="#888" font-size="4">${Math.round(mi)}kg</text>`;
+                chartData.forEach((p,i)=>{
+                    let px = (i*st)*0.8 + 15; 
+                    let py = (100-(((p.weight-mi)/r)*100))*0.7 + 15; 
+                    pt+=`${px},${py} `; 
+                    s.innerHTML+=`<circle cx="${px}" cy="${py}" r="1.5" fill="var(--accent)"/>`;
+                    s.innerHTML+=`<text x="${px}" y="98" fill="#888" font-size="3" text-anchor="middle">${p.date.substr(5).replace('-','/')}</text>`;
+                });
+                s.innerHTML=`<polyline points="${pt}" fill="none" stroke="var(--accent)" stroke-width="0.5"/>`+s.innerHTML; 
+            }
         }
         async function rMShp(){ let p=await fetchA('/products'); document.getElementById('shop-grid').innerHTML=p.map(i=>`<div class="card" style="text-align:center"><div style="font-size:3rem;margin:1rem">${i.icon}</div><h3>${i.name}</h3><div style="color:var(--accent);font-family:var(--font-head);font-size:1.5rem">₹${i.price}</div><button class="btn btn-outline" style="width:100%;margin-top:1rem" onclick="aC('${i.name}',${i.price})">Add</button></div>`).join(''); }
         function aC(n,p){ let e=cCart.find(c=>c.n===n); if(e) e.q++; else cCart.push({n,p,q:1}); uCB(); showToast('Added to cart'); }
@@ -482,6 +544,21 @@
                 document.querySelectorAll('#trainer-view .t-tab').forEach(t=>t.classList.remove('active'));
                 document.getElementById(el.getAttribute('data-tab')).classList.add('active');
             }}); rTOver(); rTAtt(); rTMems();
+            
+            let workoutMemberDropdown = document.getElementById('workoutMemberDropdown');
+            let dietMemberDropdown = document.getElementById('dietMemberDropdown');
+            workoutMemberDropdown.innerHTML = ''; dietMemberDropdown.innerHTML = '';
+            fetch('/api/trainer/members', { headers: { 'x-role': 'trainer' } })
+                .then(res => res.json())
+                .then(members => {
+                    members.forEach(m => {
+                        let opt = document.createElement('option');
+                        opt.value = m.id;
+                        opt.textContent = m.name;
+                        workoutMemberDropdown.appendChild(opt);
+                        dietMemberDropdown.appendChild(opt.cloneNode(true));
+                    });
+                });
         }
         async function rTOver(){
             let [st, ms] = await Promise.all([fetchA('/trainer/stats'), fetchA('/trainer/members')]);
@@ -491,9 +568,9 @@
                 if(!m.hasWk) f='No Workout Plan'; else if(!m.hasDt) f='No Diet Plan'; else if(lsDays>=5) f='Missing 5+ Days';
                 if(f) tb.innerHTML+=`<tr><td>${m.name}</td><td><span class="badge b-warn">${f}</span></td><td>${m.lastSeen||'--'}</td><td><button class="btn btn-outline" style="padding:4px 8px;font-size:0.8rem" onclick="showToast('Reminder sent')">Nudge</button> <button class="btn" style="padding:4px 8px;font-size:0.8rem" onclick="nav2A('${m.id}')">Assign</button></td></tr>`;
             });
-            document.getElementById('form-sel-mem').innerHTML=ms.map(m=>`<option value="${m.id}">${m.name}</option>`).join(''); tbMems=ms;
+            tbMems=ms;
         }
-        function nav2A(id){ document.querySelector('[data-tab="t-assign"]').click(); document.getElementById('form-sel-mem').value=id; }
+        function nav2A(id){ document.querySelector('[data-tab="t-assign"]').click(); document.getElementById('workoutMemberDropdown').value=id; document.getElementById('dietMemberDropdown').value=id; }
 
         async function rTAtt(){
             let att = await fetchA('/trainer/attendance/'+currU.id); let td=getToday();
@@ -529,13 +606,58 @@
         }
 
         async function saveWkPlan(){
-            let tb=document.getElementById('fw-type'); let nm=document.getElementById('form-sel-mem').options[document.getElementById('form-sel-mem').selectedIndex].text;
-            await fetchA('/trainer/assign/workout','POST',{memberId:document.getElementById('form-sel-mem').value, planType:tb.value, frequency:document.getElementById('fw-freq').value, notes:document.getElementById('fw-notes').value}); showToast(`Assigned ${tb.value} to ${nm}`); rTMems(); rTOver();
+            let selectedMemberId = document.getElementById('workoutMemberDropdown').value;
+            let selectedPlanType = document.getElementById('fw-type').value;
+            let selectedFrequency = document.getElementById('fw-freq').value;
+            let notesValue = document.getElementById('fw-notes').value;
+            let opt = document.getElementById('workoutMemberDropdown').options[document.getElementById('workoutMemberDropdown').selectedIndex];
+            let nm = opt ? opt.text : 'Unknown';
+
+            await fetch('/api/trainer/assign/workout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-role': 'trainer'
+                },
+                body: JSON.stringify({
+                    memberId: selectedMemberId,
+                    planType: selectedPlanType,
+                    frequency: selectedFrequency,
+                    notes: notesValue
+                })
+            });
+            showToast(`Plan assigned to ${nm} successfully`); 
+            rTMems(); rTOver();
         }
         async function saveDietPlan(){
-            let p=+document.getElementById('fd-p').value; let c=+document.getElementById('fd-c').value; let f=+document.getElementById('fd-f').value;
-            if((p+c+f)!==100) return showToast('Macros must equal 100!', true); let nm=document.getElementById('form-sel-mem').options[document.getElementById('form-sel-mem').selectedIndex].text;
-            await fetchA('/trainer/assign/diet','POST',{memberId:document.getElementById('form-sel-mem').value, goal:document.getElementById('fd-gl').value, calories:document.getElementById('fd-cals').value, restrictions:document.getElementById('fd-rest').value, macros:{p,c,f}}); showToast(`Assigned diet to ${nm}`); rTMems(); rTOver();
+            let selectedMemberId = document.getElementById('dietMemberDropdown').value;
+            let selectedGoal = document.getElementById('fd-gl').value;
+            let caloriesValue = document.getElementById('fd-cals').value;
+            let restrictionsValue = document.getElementById('fd-rest').value;
+            let proteinPercent = +document.getElementById('fd-p').value;
+            let carbsPercent = +document.getElementById('fd-c').value;
+            let fatsPercent = +document.getElementById('fd-f').value;
+
+            if((proteinPercent+carbsPercent+fatsPercent)!==100) return showToast('Macros must equal 100!', true); 
+            let opt = document.getElementById('dietMemberDropdown').options[document.getElementById('dietMemberDropdown').selectedIndex];
+            let nm = opt ? opt.text : 'Unknown';
+
+            await fetch('/api/trainer/assign/diet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-role': 'trainer'
+                },
+                body: JSON.stringify({
+                    memberId: selectedMemberId,
+                    goal: selectedGoal,
+                    calories: parseInt(caloriesValue),
+                    restrictions: restrictionsValue,
+                    macros: { p: proteinPercent, c: carbsPercent, f: fatsPercent }
+                })
+            });
+            showToast(`Plan assigned to ${nm} successfully`); 
+            rTMems(); rTOver();
         }
     </script>
 </body>
