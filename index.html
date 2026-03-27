@@ -6,105 +6,463 @@
     <title>EVOLVE | Gym</title>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root{--bg:#0a0a0c;--surface:#151518;--surface-hover:#1e1e23;--accent:#e8ff47;--accent-glow:rgba(232,255,71,0.3);--text:#fff;--text-muted:#888890;--border:#2a2a30;--danger:#ff4747;--success:#47ff82;--warn:#ffb847;--font-head:'Bebas Neue',display;--font-body:'DM Sans',sans-serif;--nav-width:260px;}
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
-        body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;background:url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="ns"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23ns)" opacity="0.04"/%3E%3C/svg%3E');}
-        h1,h2,h3,h4{font-family:var(--font-head);letter-spacing:1px;font-weight:normal;}
-        .btn{background:var(--accent);color:#000;font-family:var(--font-head);font-size:1.2rem;padding:0.75rem 1.5rem;border:none;border-radius:4px;cursor:pointer;transition:0.3s;text-transform:uppercase;}
-        .btn:hover:not(:disabled){box-shadow:0 0 15px var(--accent-glow);transform:translateY(-2px);}
-        .btn:disabled{opacity:0.5;cursor:not-allowed;}
-        .btn-outline{background:transparent;color:var(--accent);border:1px solid var(--accent);}
-        .btn-danger{background:var(--danger);color:#fff;border-color:var(--danger);}
-        .form-control{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:#fff;padding:0.75rem 1rem;border-radius:4px;font-family:var(--font-body);transition:0.3s;margin-bottom:1rem;}
-        .form-control:focus{outline:none;border-color:var(--accent);}
-        label{display:block;color:var(--text-muted);margin-bottom:0.5rem;font-size:0.9rem;}
-        .view{display:none;opacity:0;transition:opacity 0.4s;min-height:100vh;}
-        .view.active{display:flex;opacity:1;}
-        #auth-view{justify-content:center;align-items:center;background:radial-gradient(circle, var(--surface) 0%, var(--bg) 100%);}
-        .auth-box{background:var(--surface);padding:3rem;border-radius:12px;width:100%;max-width:400px;border:1px solid var(--border);}
-        .role-toggle{display:flex;background:rgba(0,0,0,0.5);border-radius:4px;margin-bottom:2rem;padding:4px;}
-        .role-btn{flex:1;text-align:center;padding:0.5rem;cursor:pointer;font-family:var(--font-head);font-size:1.2rem;color:var(--text-muted);border-radius:4px;transition:0.3s;}
-        .role-btn.active{background:var(--surface-hover);color:var(--accent);}
-        .sidebar{width:var(--nav-width);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100;transition:0.3s;}
-        .brand{padding:2rem;}
-        .nav-item{padding:1rem 2rem;color:var(--text-muted);font-family:var(--font-head);font-size:1.4rem;cursor:pointer;transition:0.2s;position:relative;display:flex;justify-content:space-between;align-items:center;}
-        .nav-item:hover{color:var(--text);background:rgba(255,255,255,0.02);}
-        .nav-item.active{color:var(--accent);background:rgba(232,255,71,0.05);}
-        .nav-item.active::before{content:'';position:absolute;left:0;top:0;height:100%;width:4px;background:var(--accent);box-shadow:0 0 10px var(--accent-glow);}
-        .main-content{flex:1;margin-left:var(--nav-width);padding:2rem 3rem;transition:0.3s;min-width:0;}
-        .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;}
-        .tab-pane{display:none;animation:fadeIn 0.4s ease;}
-        .tab-pane.active{display:block;}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-        .grid{display:grid;gap:1.5rem;}
-        .grid-2{grid-template-columns:repeat(auto-fit,minmax(250px,1fr));}
-        .grid-3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
-        .grid-4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));}
-        .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.5rem;}
-        .stat-val{font-size:3rem;font-family:var(--font-head);color:#fff;}
-        .badge{font-size:0.8rem;padding:4px 8px;border-radius:4px;font-weight:bold;}
-        .b-warn{background:rgba(255,184,71,0.2);color:var(--warn);}
-        .b-green{background:rgba(71,255,130,0.2);color:var(--success);}
-        .b-red{background:rgba(255,71,71,0.2);color:var(--danger);}
-        .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:1rem;}
-        .cal-day{aspect-ratio:1;background:var(--surface-hover);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:1.1rem;}
-        .cal-day.hd{background:transparent;color:#fff;}
-        .cal-day.p{background:rgba(71,255,130,0.2);color:var(--success);border:1px solid var(--success);}
-        .cal-day.a{background:rgba(255,71,71,0.2);color:var(--danger);}
-        .cal-day.td{border:1px solid var(--accent);}
-        .expandable{background:var(--surface-hover);border-radius:4px;margin-bottom:0.5rem;overflow:hidden;}
-        .exp-header{padding:1rem;display:flex;justify-content:space-between;cursor:pointer;font-family:var(--font-head);font-size:1.5rem;align-items:center;}
-        .exp-content{max-height:0;overflow:hidden;transition:0.3s;opacity:0;}
-        .expandable.open .exp-content{padding:1rem;max-height:1000px;opacity:1;border-top:1px solid var(--border);}
-        .ex-item{display:flex;align-items:center;gap:1rem;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.05);}
-        .ex-item.done span{text-decoration:line-through;color:var(--success);}
-        .ex-checkbox{width:20px;height:20px;accent-color:var(--accent);cursor:pointer;}
-        .badge-done{background:var(--success);color:#000;font-size:0.8rem;padding:2px 6px;border-radius:4px;display:none;}
-        .expandable.all-done .badge-done{display:inline-block;}
-        .macro-bars{display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;}
-        .macro-bar{flex:1;min-width:150px;background:var(--surface);padding:1rem;border-radius:4px;border:1px solid var(--border);}
-        .meal-list{list-style:none;margin:1rem 0;color:#ddd;line-height:1.8;}
-        .meal-list li{display:flex;justify-content:space-between;}
-        .chart-container{height:250px;background:var(--surface-hover);border-radius:8px;padding:1rem;position:relative;}
-        .p-bar{width:100%;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;}
-        .p-fill{height:100%;background:var(--accent);transition:0.5s;box-shadow:0 0 10px var(--accent-glow);}
-        table{width:100%;border-collapse:collapse;}
-        th,td{padding:1rem;text-align:left;border-bottom:1px solid var(--border);}
-        th{color:var(--text-muted);font-weight:normal;font-size:0.9rem;text-transform:uppercase;}
-        tr.clickable{cursor:pointer;transition:0.2s;}
-        tr.clickable:hover{background:var(--surface-hover);}
-        .cart-panel{position:fixed;top:0;right:-400px;width:400px;height:100vh;background:var(--surface);z-index:1000;border-left:1px solid var(--accent);transition:0.3s;display:flex;flex-direction:column;}
-        .cart-panel.open{right:0;}
-        .cart-item{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;background:var(--surface-hover);padding:1rem;border-radius:4px;}
-        #toast-container{position:fixed;bottom:2rem;right:2rem;z-index:10000;display:flex;flex-direction:column;gap:0.5rem;}
-        .toast{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);padding:1rem 1.5rem;border-radius:4px;animation:slideIn 0.3s forwards;}
-        @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
-        #spinner{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:99999;display:none;justify-content:center;align-items:center;}
-        .spinner-ring{width:50px;height:50px;border:4px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;}
-        @keyframes spin{100%{transform:rotate(360deg);}}
-        .hamburger{display:none;background:none;border:none;color:var(--accent);font-size:2rem;cursor:pointer;}
-        @media(max-width:900px){.sidebar{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}.main-content{margin-left:0;padding:1.5rem;}.hamburger{display:block;}.cart-panel{width:100%;right:-100%;}}
+        :root {
+            --bg: #0a0a0c;
+            --surface: #151518;
+            --surface-hover: #1e1e23;
+            --accent: #e8ff47;
+            --accent-glow: rgba(232, 255, 71, 0.4);
+            --accent-orange: #ff6b35;
+            --accent-orange-glow: rgba(255, 107, 53, 0.4);
+            --text: #ffffff;
+            --text-muted: #888890;
+            --border: #2a2a30;
+            --danger: #ff4747;
+            --success: #47ff82;
+            --warn: #ffb847;
+            --font-head: 'Bebas Neue', display;
+            --font-body: 'DM Sans', sans-serif;
+            --nav-width: 260px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Noise texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="ns"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23ns)" opacity="0.05"/%3E%3C/svg%3E');
+        }
+
+        /* Thin dark scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 4px; border: 1px solid var(--border); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        h1, h2, h3, h4 { font-family: var(--font-head); letter-spacing: 1px; font-weight: normal; }
+
+        /* Buttons with hover scale and glow */
+        .btn {
+            background: var(--accent);
+            color: #000;
+            font-family: var(--font-head);
+            font-size: 1.2rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        .btn:hover:not(:disabled) {
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-2px) scale(1.02);
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-outline { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+        .btn-outline:hover:not(:disabled) { background: rgba(232, 255, 71, 0.1); }
+        .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+        .btn-danger:hover:not(:disabled) { box-shadow: 0 0 15px rgba(255, 71, 71, 0.4); }
+
+        /* Form Controls with bottom border and focus glow */
+        .form-control {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--border);
+            color: #fff;
+            padding: 0.75rem 0.5rem;
+            border-radius: 0;
+            font-family: var(--font-body);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+        .form-control:focus {
+            outline: none;
+            border-bottom-color: var(--accent);
+            box-shadow: 0 10px 10px -10px var(--accent-glow);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        select.form-control option { background: var(--bg); color: var(--text); }
+        label { display: block; color: var(--text-muted); margin-bottom: 0.25rem; font-size: 0.9rem; text-transform: uppercase; font-family: var(--font-head); letter-spacing: 1px; }
+
+        /* Smooth View Transitions */
+        .view { display: none; opacity: 0; transition: opacity 0.5s ease; min-height: 100vh; }
+        .view.active { display: flex; opacity: 1; animation: pageFadeIn 0.8s forwards; }
+        @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Login Page Additions */
+        #auth-view { justify-content: center; align-items: center; position: relative; }
+        .login-bg { position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1920&q=80') center/cover no-repeat; z-index: -2; }
+        .login-overlay { position: absolute; inset: 0; background: rgba(10, 10, 12, 0.85); z-index: -1; }
+        .particle { position: absolute; width: 4px; height: 4px; background: var(--accent); border-radius: 50%; opacity: 0; animation: floatUp linear infinite; pointer-events: none; z-index: -1; }
+        @keyframes floatUp { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 50% { opacity: 0.5; } 100% { transform: translateY(-10vh) scale(1); opacity: 0; } }
+
+        .auth-box {
+            background: rgba(21, 21, 24, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 3.5rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+        .main-logo { font-size: 5rem; text-align: center; color: var(--accent); margin-bottom: 0.5rem; text-shadow: 0 0 20px var(--accent-glow); animation: logoPulse 2s infinite alternate; }
+        @keyframes logoPulse { from { transform: scale(1); text-shadow: 0 0 10px var(--accent-glow); } to { transform: scale(1.05); text-shadow: 0 0 30px var(--accent-glow); } }
+        .motto { text-align: center; color: var(--text-muted); font-family: var(--font-head); letter-spacing: 2px; margin-bottom: 2rem; }
+
+        /* Role Toggle as Pill Tabs */
+        .role-toggle { display: flex; background: rgba(0,0,0,0.6); border-radius: 30px; margin-bottom: 2.5rem; padding: 4px; border: 1px solid var(--border); }
+        .role-btn { flex: 1; text-align: center; padding: 0.75rem; cursor: pointer; font-family: var(--font-head); font-size: 1.2rem; color: var(--text-muted); border-radius: 30px; transition: all 0.3s ease; }
+        .role-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* Sidebar with Subtle Grid Pattern */
+        .sidebar {
+            width: var(--nav-width);
+            background: linear-gradient(180deg, var(--surface) 0%, #0d0d10 100%);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+        }
+        .sidebar-content { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%; }
+        
+        .brand { padding: 2rem; display: flex; align-items: center; gap: 10px; }
+        .brand-icon { font-size: 2rem; color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
+
+        .nav-item {
+            padding: 1.2rem 2rem;
+            color: var(--text-muted);
+            font-family: var(--font-head);
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .nav-item:hover { color: var(--text); background: rgba(255, 255, 255, 0.02); padding-left: 2.5rem; }
+        .nav-item.active { color: var(--text); background: rgba(232, 255, 71, 0.05); }
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* Avatar Circle */
+        .avatar-circle {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--surface-hover);
+            border: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-head);
+            font-size: 1.5rem;
+            color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .main-content { flex: 1; margin-left: var(--nav-width); transition: all 0.3s ease; min-width: 0; padding-bottom: 2rem; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding: 2rem 3rem 0; }
+        .tab-pane { display: none; animation: fadeIn 0.4s ease; padding: 0 3rem; }
+        .tab-pane.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .grid { display: grid; gap: 1.5rem; }
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+        .grid-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+        /* Cards with hover glow */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        .card-glow:hover { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
+        .card-left-bar { border-left: 4px solid var(--accent); }
+        
+        .stat-val { font-size: 3.5rem; font-family: var(--font-head); color: #fff; line-height: 1.1; margin-top: 0.5rem; }
+        
+        .badge { font-size: 0.8rem; padding: 4px 8px; border-radius: 6px; font-weight: bold; font-family: var(--font-body); }
+        .b-warn { background: rgba(255, 184, 71, 0.2); color: var(--warn); border: 1px solid rgba(255, 184, 71, 0.3); }
+        .b-green { background: rgba(71, 255, 130, 0.2); color: var(--success); border: 1px solid rgba(71, 255, 130, 0.3); }
+        .b-red { background: rgba(255, 71, 71, 0.2); color: var(--danger); border: 1px solid rgba(255, 71, 71, 0.3); }
+
+        /* Overview Hero Banner */
+        .hero-banner {
+            background: url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1200&q=80') center/cover no-repeat;
+            padding: 4rem 3rem;
+            position: relative;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .hero-banner::before { content: ''; position: absolute; inset: 0; background: rgba(10, 10, 12, 0.6); backdrop-filter: blur(4px); }
+        .hero-content { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-end; }
+        .hero-title { font-size: 4rem; color: #fff; text-shadow: 0 0 20px rgba(0,0,0,0.8); }
+
+        /* Large glowing clock */
+        .clock-display { font-size: 7rem; font-family: var(--font-head); letter-spacing: 4px; color: var(--accent); text-shadow: 0 0 30px var(--accent-glow); margin: 2rem 0; }
+        
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 1rem; }
+        .cal-day { aspect-ratio: 1; background: var(--surface-hover); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 1.2rem; transition: 0.3s; }
+        .cal-day.hd { background: transparent; color: var(--text-muted); font-size: 1rem; }
+        .cal-day.p { background: rgba(71, 255, 130, 0.1); color: var(--success); border: 1px solid var(--success); box-shadow: 0 0 10px rgba(71, 255, 130, 0.2); }
+        .cal-day.a { background: rgba(255, 71, 71, 0.1); color: var(--danger); border: 1px solid rgba(255, 71, 71, 0.2); }
+        .cal-day.td { border: 1px solid var(--accent); box-shadow: inset 0 0 10px var(--accent-glow); font-size: 1.5rem; }
+
+        /* Workout Plan Expandables */
+        .expandable { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1rem; overflow: hidden; transition: 0.3s; }
+        .expandable:hover { border-color: rgba(255,255,255,0.1); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .exp-header { padding: 1.2rem; display: flex; justify-content: space-between; cursor: pointer; font-family: var(--font-head); font-size: 1.5rem; align-items: center; border-left: 4px solid var(--accent); transition: 0.3s; background: rgba(255,255,255,0.02); }
+        .exp-header.ch-chest { border-left-color: #ff4747; }
+        .exp-header.ch-back { border-left-color: #47a0ff; }
+        .exp-header.ch-legs { border-left-color: #47ff82; }
+        .exp-header.ch-shoulders { border-left-color: #e8ff47; }
+        .exp-header.ch-cardio { border-left-color: #ffb847; }
+        .exp-header.ch-full { border-left-color: #c247ff; }
+        
+        .exp-content { max-height: 0; overflow: hidden; transition: all 0.4s ease; opacity: 0; }
+        .expandable.open .exp-content { padding: 0 1.2rem 1.2rem; max-height: 2000px; opacity: 1; }
+        
+        .ex-item { display: flex; align-items: center; gap: 1.5rem; padding: 1rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .ex-item:last-child { border-bottom: none; }
+        .ex-item.done h4 { text-decoration: line-through; color: var(--text-muted); }
+        
+        /* Custom Circular Checkmark */
+        .check-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; }
+        .check-circle::after { content: '✓'; font-family: var(--font-body); font-weight: bold; color: #000; opacity: 0; transform: scale(0); transition: 0.3s; }
+        .ex-item.done .check-circle { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); }
+        .ex-item.done .check-circle::after { opacity: 1; transform: scale(1); }
+        
+        .badge-set { background: rgba(255,255,255,0.1); color: #fff; font-size: 0.85rem; padding: 4px 10px; border-radius: 30px; font-family: var(--font-head); letter-spacing: 1px; }
+
+        /* Diet Plan Cards */
+        .meal-card { position: relative; border-radius: 12px; overflow: hidden; min-height: 220px; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem; transition: 0.3s; border: 1px solid var(--border); }
+        .meal-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.5); border-color: var(--accent); }
+        .meal-bg { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform 0.6s ease; z-index: 0; }
+        .meal-card:hover .meal-bg { transform: scale(1.05); }
+        .meal-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(10,10,12,0.2) 0%, rgba(10,10,12,0.9) 100%); z-index: 1; }
+        .meal-content { position: relative; z-index: 2; }
+        
+        .macro-bars { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .macro-bar { flex: 1; min-width: 150px; background: rgba(21, 21, 24, 0.6); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; }
+        
+        .p-bar { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; }
+        .p-fill { height: 100%; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px currentColor; }
+        .fill-blue { background: #47a0ff; color: rgba(71, 160, 255, 0.5); }
+        .fill-yellow { background: #e8ff47; color: rgba(232, 255, 71, 0.5); }
+        .fill-orange { background: #ffb847; color: rgba(255, 184, 71, 0.5); }
+        
+        .meal-list { list-style: none; margin: 1rem 0; color: #ddd; line-height: 1.8; }
+        .meal-list li { display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(255,255,255,0.1); padding: 4px 0; }
+        
+        .chart-container { height: 250px; background: rgba(255,255,255,0.02); border-radius: 12px; padding: 1.5rem; position: relative; border: 1px solid var(--border); }
+        
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        th, td { padding: 1.2rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { color: var(--text-muted); font-weight: normal; font-size: 0.9rem; text-transform: uppercase; font-family: var(--font-head); letter-spacing: 1px; }
+        tr.clickable { cursor: pointer; transition: 0.2s; }
+        tr.clickable:hover { background: rgba(255, 255, 255, 0.05); }
+
+        /* Shop Additions */
+        .filter-row { display: flex; gap: 10px; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 10px; }
+        .filter-btn { padding: 0.5rem 1.5rem; border-radius: 30px; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); cursor: pointer; font-family: var(--font-head); font-size: 1.2rem; transition: 0.3s; white-space: nowrap; }
+        .filter-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+        
+        .prod-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: 0.3s; position: relative; }
+        .prod-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.6); border-color: var(--accent); }
+        .prod-img-wrap { height: 180px; position: relative; overflow: hidden; }
+        .prod-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; display: block; }
+        .prod-card:hover .prod-img { transform: scale(1.05); }
+        .prod-img-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, rgba(10,10,12,0.95) 100%); }
+        .cat-badge { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; z-index: 2; border-left: 2px solid var(--accent); }
+        .prod-info { padding: 1.5rem; position: relative; z-index: 2; }
+        
+        /* Cart Slide-in */
+        .cart-panel { position: fixed; top: 0; right: -450px; width: 450px; height: 100vh; background: rgba(21, 21, 24, 0.95); backdrop-filter: blur(20px); z-index: 1000; border-left: 1px solid var(--accent); transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.5); }
+        .cart-panel.open { right: 0; }
+        .cart-item { display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; background: rgba(255, 255, 255, 0.02); padding: 1rem; border-radius: 8px; border: 1px solid var(--border); }
+        .cart-item-img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
+        .qty-controls { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); border-radius: 4px; padding: 4px; }
+        .qty-btn { background: transparent; border: none; color: #fff; cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 4px; transition: 0.2s; }
+        .qty-btn:hover { background: var(--accent); color: #000; }
+
+        /* Toast & Spinners */
+        #toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 10000; display: flex; flex-direction: column; gap: 0.5rem; }
+        .toast { background: rgba(21,21,24,0.9); backdrop-filter: blur(10px); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 1.2rem 1.5rem; border-radius: 8px; animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        @keyframes slideIn { from{transform: translateX(100%); opacity:0} to{transform: translateX(0); opacity:1} }
+        
+        #spinner { position: fixed; inset: 0; background: rgba(10,10,12,0.8); backdrop-filter: blur(5px); z-index: 99999; display: none; justify-content: center; align-items: center; }
+        /* Dumbbell Spinner Logo */
+        .dumbbell-spin { display: flex; gap: 6px; align-items: center; animation: spin 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        .weight-plate { width: 12px; height: 40px; background: var(--accent); border-radius: 4px; box-shadow: 0 0 15px var(--accent-glow); }
+        .weight-plate-s { width: 10px; height: 30px; background: var(--accent); border-radius: 3px; box-shadow: 0 0 10px var(--accent-glow); }
+        .spin-bar { width: 30px; height: 8px; background: #fff; border-radius: 2px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .hamburger { display: none; background: none; border: none; color: var(--accent); font-size: 2rem; cursor: pointer; }
+
+        /* Theme override for Trainer */
+        .trainer-mode {
+            --accent: var(--accent-orange);
+            --accent-glow: var(--accent-orange-glow);
+        }
+
+        /* Enhanced Meal Cards with Food Images */
+        .meal-card-b { background-image: url('https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=800&q=80'); }
+        .meal-card-l { background-image: url('https://images.unsplash.com/photo-1512058564366-18510be2db19?w=800&q=80'); }
+        .meal-card-d { background-image: url('https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&q=80'); }
+        .meal-card-s { background-image: url('https://images.unsplash.com/photo-1622484212850-eb596d769edc?w=800&q=80'); }
+
+        /* Stat card glow borders on hover */
+        .card-stat { position: relative; overflow: hidden; }
+        .card-stat::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 0%, rgba(232,255,71,0.08), transparent 70%); pointer-events: none; opacity: 0; transition: opacity 0.4s; }
+        .card-stat:hover::after { opacity: 1; }
+
+        /* Auth box entrance animation */
+        .auth-box { animation: authSlideUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes authSlideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Gym motivational quote banner */
+        .quote-banner { background: var(--accent); color: #000; padding: 0.6rem 2rem; font-family: var(--font-head); font-size: 1rem; letter-spacing: 2px; text-align: center; overflow: hidden; position: relative; }
+        .quote-banner span { display: inline-block; animation: marqueeScroll 20s linear infinite; white-space: nowrap; }
+        @keyframes marqueeScroll { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+
+        /* Progress chart area upgrade */
+        .chart-container { background: linear-gradient(135deg, rgba(232,255,71,0.03) 0%, rgba(255,255,255,0.02) 100%); }
+
+        /* Workout done glow effect */
+        .expandable.all-done .exp-header { border-left-color: var(--success); background: rgba(71,255,130,0.05); }
+        .badge-done { display: none; background: var(--success); color: #000; font-size: 0.7rem; padding: 2px 8px; border-radius: 30px; }
+        .expandable.all-done .badge-done { display: inline-block; }
+
+        /* Shop product cards with better images */
+        .prod-card { box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+
+        /* Attendance check-in button glow */
+        #btn-checkin { box-shadow: 0 0 30px rgba(232,255,71,0.2); }
+
+        /* Login background parallax feel */
+        .login-bg { background: url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1920&q=80') center/cover no-repeat; transform: scale(1.05); transition: transform 20s ease; }
+        .login-bg:hover { transform: scale(1); }
+
+        /* Hero banner upgrade */
+        .hero-banner { border-bottom: none; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+
+        /* Better empty state */
+        #t-mem-empty { background: rgba(255,255,255,0.02); border-radius: 8px; margin: 1rem; }
+
+        /* Card accent variants */
+        .card-orange { border-left: 4px solid var(--accent-orange) !important; }
+        .card-green { border-left: 4px solid var(--success) !important; }
+        .card-yellow { border-left: 4px solid var(--accent) !important; }
+        .card-warn { border-left: 4px solid var(--warn) !important; }
+
+        /* Spinner upgrade */
+        #spinner { background: rgba(10,10,12,0.9); }
+        .spinner-ring { width: 50px; height: 50px; border: 3px solid rgba(232,255,71,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Sidebar overlay for mobile */
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; }
+        .sidebar-overlay.active { display: block; }
+
+        @media(max-width: 900px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+            .main-content { margin-left: 0; }
+            .hamburger { display: block !important; }
+            .cart-panel { width: 100%; right: -100%; }
+            .hero-title { font-size: 3rem; }
+            .tab-pane { padding: 0 1.5rem; }
+        }
     </style>
 </head>
 <body>
     <div id="spinner"><div class="spinner-ring"></div></div>
     <div id="toast-container"></div>
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebars()"></div>
+    <div class="quote-banner" id="quote-bar" style="display:none"><span>💪 NO PAIN NO GAIN &nbsp;&nbsp;&nbsp; 🔥 TRAIN INSANE OR REMAIN THE SAME &nbsp;&nbsp;&nbsp; 🏋️ EVOLVE EVERY DAY &nbsp;&nbsp;&nbsp; ⚡ YOUR ONLY LIMIT IS YOU &nbsp;&nbsp;&nbsp; 🎯 COMMIT TO BE FIT &nbsp;&nbsp;&nbsp; 💯 PUSH YOUR LIMITS &nbsp;&nbsp;&nbsp;</span></div>
     <div id="server-status" style="position:fixed; top:1rem; right:1rem; z-index:9999; display:flex; align-items:center; gap:0.5rem; font-family:var(--font-head); font-size:1.2rem; background:rgba(0,0,0,0.5); padding:0.5rem 1rem; border-radius:4px; border:1px solid var(--border);">
         <div id="status-dot" style="width:12px; height:12px; border-radius:50%; background:#888;"></div><span id="status-text" style="color:#ddd">Ping...</span>
     </div>
 
     <!-- AUTH -->
     <div id="auth-view" class="view active">
+        <div class="login-bg"></div>
+        <div class="login-overlay"></div>
+        <div class="particle" style="left:10%;animation-duration:8s;animation-delay:0s;"></div>
+        <div class="particle" style="left:25%;animation-duration:12s;animation-delay:2s;"></div>
+        <div class="particle" style="left:40%;animation-duration:9s;animation-delay:4s;"></div>
+        <div class="particle" style="left:60%;animation-duration:11s;animation-delay:1s;"></div>
+        <div class="particle" style="left:75%;animation-duration:7s;animation-delay:3s;"></div>
+        <div class="particle" style="left:90%;animation-duration:13s;animation-delay:5s;"></div>
         <div class="auth-box">
-            <h1 style="text-align:center; color:var(--accent); font-size:4rem; margin-bottom:1rem;">EVOLVE</h1>
+            <div style="text-align:center; margin-bottom:0.5rem;">
+                <div style="display:inline-flex; align-items:center; gap:12px;">
+                    <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><rect x="2" y="10" width="10" height="16" rx="3" fill="#e8ff47"/><rect x="14" y="6" width="8" height="24" rx="2" fill="#e8ff47" opacity="0.7"/><rect x="24" y="10" width="10" height="16" rx="3" fill="#e8ff47"/></svg>
+                    <h1 style="color:var(--accent); font-size:3.8rem; letter-spacing:4px; margin:0;">EVOLVE</h1>
+                </div>
+                <p style="color:var(--text-muted); letter-spacing:3px; font-size:0.75rem; margin-top:2px;">PREMIUM FITNESS MANAGEMENT</p>
+            </div>
+            <div style="height:1px; background:linear-gradient(90deg, transparent, var(--accent), transparent); margin:1.5rem 0; opacity:0.4;"></div>
             <div class="role-toggle">
                 <div class="role-btn active" onclick="setRole('member')" id="btn-rm">Member</div>
                 <div class="role-btn" onclick="setRole('trainer')" id="btn-rt">Trainer</div>
             </div>
             <form id="login-form">
-                <div style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem; text-align:center; line-height:1.5;">
-                    Member: member@evolve.com / member123 <br> Trainer: trainer@evolve.com / trainer123
+                <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.2rem; text-align:center; line-height:1.8; background:rgba(255,255,255,0.03); padding:0.75rem; border-radius:6px; border:1px solid rgba(255,255,255,0.05);">
+                    <span style="color:#888">Demo:</span> member@evolve.com / member123 <br> trainer@evolve.com / trainer123
                 </div>
                 <input type="email" id="login-em" class="form-control" value="member@evolve.com">
                 <input type="password" id="login-pw" class="form-control" value="member123">
@@ -135,11 +493,17 @@
     <!-- MEMBER -->
     <div id="member-view" class="view">
         <aside class="sidebar" id="m-side">
-            <div class="brand"><h2>EVOLVE</h2><span style="color:var(--text-muted); font-size:0.8rem; letter-spacing:2px;">MEMBER PORTAL</span></div>
+            <div class="brand">
+                <svg width="28" height="28" viewBox="0 0 36 36" fill="none"><rect x="2" y="10" width="10" height="16" rx="3" fill="#e8ff47"/><rect x="14" y="6" width="8" height="24" rx="2" fill="#e8ff47" opacity="0.7"/><rect x="24" y="10" width="10" height="16" rx="3" fill="#e8ff47"/></svg>
+                <div><h2 style="font-size:1.8rem; line-height:1">EVOLVE</h2><span style="color:var(--text-muted); font-size:0.7rem; letter-spacing:2px;">MEMBER PORTAL</span></div>
+            </div>
             <div id="m-nav">
-                <div class="nav-item active" data-tab="tab-overview">Overview</div><div class="nav-item" data-tab="tab-attendance">Attendance</div>
-                <div class="nav-item" data-tab="tab-workout">Workout</div><div class="nav-item" data-tab="tab-diet">Diet</div>
-                <div class="nav-item" data-tab="tab-progress">Progress</div><div class="nav-item" data-tab="tab-shop">Shop <span class="badge b-warn" id="nav-cart-badge">0</span></div>
+                <div class="nav-item active" data-tab="tab-overview">🏠 Overview</div>
+                <div class="nav-item" data-tab="tab-attendance">📅 Attendance</div>
+                <div class="nav-item" data-tab="tab-workout">💪 Workout</div>
+                <div class="nav-item" data-tab="tab-diet">🥗 Diet</div>
+                <div class="nav-item" data-tab="tab-progress">📈 Progress</div>
+                <div class="nav-item" data-tab="tab-shop">🛒 Shop <span class="badge b-warn" id="nav-cart-badge">0</span></div>
             </div>
             <div style="padding:1.5rem; margin-top:auto; border-top:1px solid var(--border)">
                 <h4 id="m-user-name">User</h4><div style="color:var(--accent); font-size:0.8rem;" id="m-plan-badge">PLAN</div>
@@ -147,19 +511,32 @@
             </div>
         </aside>
         <main class="main-content">
-            <div class="header"><button class="hamburger" onclick="document.getElementById('m-side').classList.toggle('open')">☰</button><h2 id="m-title">Overview</h2><div id="m-date" style="color:var(--text-muted)"></div></div>
+            <div class="header"><button class="hamburger" onclick="openSidebar('m-side')">☰</button><h2 id="m-title">Overview</h2><div id="m-date" style="color:var(--text-muted)"></div></div>
 
             <div id="tab-overview" class="tab-pane m-tab active">
+                <div class="hero-banner" style="margin: -0px 0 2rem; border-radius:12px; background-image:url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1400&q=80');">
+                    <div class="hero-content">
+                        <div>
+                            <div style="color:var(--accent); font-size:0.85rem; letter-spacing:3px; margin-bottom:0.5rem; font-family:var(--font-head)">WELCOME BACK</div>
+                            <div class="hero-title" id="hero-greeting">Let's Get Moving</div>
+                            <p style="color:rgba(255,255,255,0.7); margin-top:0.5rem; font-size:1rem;">Every rep counts. Stay consistent.</p>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:0.8rem; color:rgba(255,255,255,0.5); margin-bottom:0.3rem">Goal Progress</div>
+                            <div style="font-size:4rem; font-family:var(--font-head); color:var(--accent)" id="hero-pct">--</div>
+                        </div>
+                    </div>
+                </div>
                 <div class="grid grid-4" style="margin-bottom: 2rem;">
-                    <div class="card"><h4 style="color:var(--text-muted)">Workouts</h4><div class="stat-val" style="color:var(--accent)" id="ov-workouts">0</div></div>
-                    <div class="card"><h4 style="color:var(--text-muted)">Current Weight</h4><div class="stat-val" id="ov-weight">--<span style="font-size:1rem;color:var(--text-muted)">kg</span></div></div>
-                    <div class="card" style="grid-column: span 2"><h4 style="color:var(--text-muted)">Goal Progress (<span id="ov-goal-perc">0%</span>)</h4>
+                    <div class="card card-yellow"><h4 style="color:var(--text-muted)">💪 Workouts</h4><div class="stat-val" style="color:var(--accent)" id="ov-workouts">0</div></div>
+                    <div class="card card-green"><h4 style="color:var(--text-muted)">⚖️ Current Weight</h4><div class="stat-val" id="ov-weight">--<span style="font-size:1rem;color:var(--text-muted)">kg</span></div></div>
+                    <div class="card card-orange" style="grid-column: span 2"><h4 style="color:var(--text-muted)">🎯 Goal Progress (<span id="ov-goal-perc">0%</span>)</h4>
                         <div class="stat-val" style="color:var(--success); font-size:1.5rem; margin-top:10px" id="ov-goal-text">ON TRACK</div>
                         <div class="p-bar" style="margin-top:10px"><div class="p-fill" id="ov-goal-bar" style="width:0%"></div></div></div>
                 </div>
                 <div class="grid grid-2">
-                    <div class="card"><h3 style="color:var(--accent); margin-bottom:1rem; font-size:1.8rem">Today's Workout</h3><div id="ov-today-wk" style="color:#ddd; line-height:1.6;"></div></div>
-                    <div class="card"><h3 style="color:var(--accent); margin-bottom:1rem; font-size:1.8rem">Today's Diet</h3><div id="ov-today-dt" style="color:#ddd; line-height:1.6;"></div></div>
+                    <div class="card" style="background:linear-gradient(135deg, var(--surface) 0%, rgba(232,255,71,0.05) 100%); border-color:rgba(232,255,71,0.2);"><h3 style="color:var(--accent); margin-bottom:1rem; font-size:1.8rem">💪 Today's Workout</h3><div id="ov-today-wk" style="color:#ddd; line-height:1.6;"></div></div>
+                    <div class="card" style="background:linear-gradient(135deg, var(--surface) 0%, rgba(71,255,130,0.05) 100%); border-color:rgba(71,255,130,0.2);"><h3 style="color:var(--success); margin-bottom:1rem; font-size:1.8rem">🥗 Today's Diet</h3><div id="ov-today-dt" style="color:#ddd; line-height:1.6;"></div></div>
                 </div>
             </div>
 
@@ -180,12 +557,17 @@
 
             <div id="tab-workout" class="tab-pane m-tab"><div id="workout-list"></div></div>
             <div id="tab-diet" class="tab-pane m-tab">
-                <div class="card" style="margin-bottom:2rem; border-color:var(--accent);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap"><h3 style="color:var(--accent); font-size:2rem">Daily Targets</h3><div style="font-family:var(--font-head); font-size:2rem"><span id="diet-eaten">0</span> / <span id="diet-tot">0</span> kcal</div></div>
-                    <div class="macro-bars" style="margin-top:1.5rem; margin-bottom:0">
+                <div style="margin-bottom:2rem; border-radius:12px; overflow:hidden; position:relative; min-height:180px; background:url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1200&q=80') center/cover; border:1px solid var(--border);">
+                    <div style="position:absolute; inset:0; background:linear-gradient(90deg, rgba(10,10,12,0.95) 0%, rgba(10,10,12,0.6) 100%);"></div>
+                    <div style="position:relative; z-index:1; padding:2rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+                        <div><h3 style="color:var(--accent); font-size:2rem; margin-bottom:0.3rem">Daily Targets</h3><p style="color:rgba(255,255,255,0.5); font-size:0.9rem">Track every meal. Fuel your gains.</p></div>
+                        <div style="text-align:right;"><div style="font-family:var(--font-head); font-size:3.5rem; line-height:1"><span id="diet-eaten">0</span> / <span id="diet-tot">0</span></div><div style="color:var(--text-muted); font-size:0.85rem; letter-spacing:2px">KCAL CONSUMED</div></div>
+                    </div>
+                    <div class="macro-bars" style="margin:0 1rem 1.5rem; padding-top:0; position:relative; z-index:1;">
                         <div class="macro-bar"><h4 style="color:var(--text-muted)">Protein</h4><div class="p-bar"><div class="p-fill" id="mac-p-bar" style="width:0%; background:#ff4747"></div></div><p style="margin-top:5px; font-weight:bold"><span id="mac-p">0</span>g</p></div>
                         <div class="macro-bar"><h4 style="color:var(--text-muted)">Carbs</h4><div class="p-bar"><div class="p-fill" id="mac-c-bar" style="width:0%; background:#47ff82"></div></div><p style="margin-top:5px; font-weight:bold"><span id="mac-c">0</span>g</p></div>
-                        <div class="macro-bar"><h4 style="color:var(--text-muted)">Fats</h4><div class="p-bar"><div class="p-fill" id="mac-f-bar" style="width:0%; background:#e8ff47"></div></div><p style="margin-top:5px; font-weight:bold"><span id="mac-f">0</span>g</p></div></div>
+                        <div class="macro-bar"><h4 style="color:var(--text-muted)">Fats</h4><div class="p-bar"><div class="p-fill" id="mac-f-bar" style="width:0%; background:#e8ff47"></div></div><p style="margin-top:5px; font-weight:bold"><span id="mac-f">0</span>g</p></div>
+                    </div>
                 </div>
                 <div class="grid grid-3" id="diet-meals"></div>
             </div>
@@ -226,11 +608,16 @@
 
     <!-- TRAINER -->
     <div id="trainer-view" class="view">
-        <aside class="sidebar" id="t-side" style="border-right-color:var(--accent)">
-            <div class="brand"><h2>EVOLVE</h2><span style="color:var(--accent); font-size:0.8rem; letter-spacing:2px;">TRAINER COMMAND</span></div>
+        <aside class="sidebar" id="t-side" style="border-right-color:var(--accent-orange)">
+            <div class="brand">
+                <svg width="28" height="28" viewBox="0 0 36 36" fill="none"><rect x="2" y="10" width="10" height="16" rx="3" fill="#ff6b35"/><rect x="14" y="6" width="8" height="24" rx="2" fill="#ff6b35" opacity="0.7"/><rect x="24" y="10" width="10" height="16" rx="3" fill="#ff6b35"/></svg>
+                <div><h2 style="font-size:1.8rem; line-height:1; color:var(--accent-orange)">EVOLVE</h2><span style="color:var(--text-muted); font-size:0.7rem; letter-spacing:2px;">TRAINER HQ</span></div>
+            </div>
             <div id="t-nav">
-                <div class="nav-item active" data-tab="t-overview">Overview</div><div class="nav-item" data-tab="t-attend">My Attendance</div>
-                <div class="nav-item" data-tab="t-members">Members</div><div class="nav-item" data-tab="t-assign">Assign Plans</div>
+                <div class="nav-item active" data-tab="t-overview">🎯 Overview</div>
+                <div class="nav-item" data-tab="t-attend">⏱ My Attendance</div>
+                <div class="nav-item" data-tab="t-members">👥 Members</div>
+                <div class="nav-item" data-tab="t-assign">📋 Assign Plans</div>
             </div>
             <div style="padding:1.5rem; margin-top:auto; border-top:1px solid var(--border)">
                 <h4 id="t-name">Trainer</h4><div style="color:var(--accent); font-size:0.8rem;">INSTRUCTOR</div>
@@ -239,16 +626,26 @@
         </aside>
 
         <main class="main-content">
-            <div class="header"><button class="hamburger" onclick="document.getElementById('t-side').classList.toggle('open')" style="color:var(--success)">☰</button><h2 id="t-title">Overview</h2><div id="t-date" style="color:var(--text-muted)"></div></div>
+            <div class="header"><button class="hamburger" onclick="openSidebar('t-side')" style="color:var(--success)">☰</button><h2 id="t-title">Overview</h2><div id="t-date" style="color:var(--text-muted)"></div></div>
 
             <div id="t-overview" class="tab-pane t-tab active">
-                <div class="grid grid-4" style="margin-bottom:2rem;">
-                    <div class="card"><h4 style="color:var(--text-muted)">Total Members</h4><div class="stat-val" id="to-tot">0</div></div>
-                    <div class="card"><h4 style="color:var(--text-muted)">Checked In Today</h4><div class="stat-val" style="color:var(--accent)" id="to-chk">0</div></div>
-                    <div class="card"><h4 style="color:var(--text-muted)">Avg Attendance</h4><div class="stat-val" style="color:var(--success)" id="to-avg">0%</div></div>
-                    <div class="card"><h4 style="color:var(--text-muted)">My Sessions</h4><div class="stat-val" style="color:var(--warn)" id="to-ses">0</div></div>
+                <div class="hero-banner" style="margin: 0 0 2rem; border-radius:12px; background-image:url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1400&q=80');">
+                    <div class="hero-content">
+                        <div>
+                            <div style="color:#ff6b35; font-size:0.85rem; letter-spacing:3px; margin-bottom:0.5rem; font-family:var(--font-head)">TRAINER COMMAND CENTER</div>
+                            <div class="hero-title" style="color:#fff">Coach Dashboard</div>
+                            <p style="color:rgba(255,255,255,0.7); margin-top:0.5rem">Build champions. One session at a time.</p>
+                        </div>
+                        <div style="text-align:right;"><div id="t-date-hero" style="color:rgba(255,255,255,0.6); font-size:0.9rem"></div></div>
+                    </div>
                 </div>
-                <div class="card" style="border-color:var(--warn)"><h3 style="color:var(--warn); margin-bottom:1.5rem;">⚠️ Members Needing Attention</h3><table id="t-attn-table"><thead><tr><th>Name</th><th>Flag Reason</th><th>Last Seen</th><th>Action</th></tr></thead><tbody></tbody></table></div>
+                <div class="grid grid-4" style="margin-bottom:2rem;">
+                    <div class="card card-yellow"><h4 style="color:var(--text-muted)">👥 Total Members</h4><div class="stat-val" id="to-tot">0</div></div>
+                    <div class="card card-green"><h4 style="color:var(--text-muted)">✅ Checked In Today</h4><div class="stat-val" style="color:var(--accent)" id="to-chk">0</div></div>
+                    <div class="card card-orange"><h4 style="color:var(--text-muted)">📊 Avg Attendance</h4><div class="stat-val" style="color:var(--success)" id="to-avg">0%</div></div>
+                    <div class="card card-warn"><h4 style="color:var(--text-muted)">🏋️ My Sessions</h4><div class="stat-val" style="color:var(--warn)" id="to-ses">0</div></div>
+                </div>
+                <div class="card" style="border-color:var(--warn);"><h3 style="color:var(--warn); margin-bottom:1.5rem;">⚠️ Members Needing Attention</h3><table id="t-attn-table"><thead><tr><th>Name</th><th>Flag Reason</th><th>Last Seen</th><th>Action</th></tr></thead><tbody></tbody></table></div>
             </div>
 
             <div id="t-attend" class="tab-pane t-tab">
@@ -298,10 +695,19 @@
         </main>
     </div>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         const API = '/api';
         const getToday = () => new Date().toLocaleDateString('en-CA');
         const showToast = (msg, err) => { const c=document.getElementById('toast-container'); const t=document.createElement('div'); t.className='toast'; t.innerHTML=msg; if(err) t.style.borderLeftColor='var(--danger)'; c.appendChild(t); setTimeout(()=>{ t.style.animation='fadeOut 0.3s forwards'; setTimeout(()=>t.remove(),300); }, 3000); };
+
+        function openSidebar(id) {
+            document.getElementById(id).classList.add('open');
+            document.getElementById('sidebar-overlay').classList.add('active');
+        }
+        function closeSidebars() {
+            document.querySelectorAll('.sidebar').forEach(s => s.classList.remove('open'));
+            document.getElementById('sidebar-overlay').classList.remove('active');
+        }
         const logout = () => { sessionStorage.clear(); location.reload(); };
 
         let currU = null; let rle='member'; let cCart=[]; 
@@ -362,7 +768,8 @@
                 
                 currU = data;
                 sessionStorage.setItem('role', currU.role); sessionStorage.setItem('id', currU.id); sessionStorage.setItem('name', currU.name);
-                document.getElementById('auth-view').classList.remove('active'); showToast('Welcome, '+currU.name);
+                document.getElementById('auth-view').classList.remove('active'); showToast('Welcome back, '+currU.name+' 💪');
+                document.getElementById('quote-bar').style.display='block';
                 if(currU.role==='trainer'){ document.getElementById('trainer-view').classList.add('active'); initT(); }
                 else{ document.getElementById('member-view').classList.add('active'); initM(); }
             } catch(e) {
@@ -395,7 +802,8 @@
                 
                 currU = data;
                 sessionStorage.setItem('role', currU.role); sessionStorage.setItem('id', currU.id); sessionStorage.setItem('name', currU.name);
-                document.getElementById('auth-view').classList.remove('active'); showToast('Registration successful! Welcome, '+currU.name);
+                document.getElementById('auth-view').classList.remove('active'); showToast('Registration successful! Welcome, '+currU.name+' 🎉');
+                document.getElementById('quote-bar').style.display='block';
                 document.getElementById('member-view').classList.add('active'); initM();
             } catch(e) { 
                 document.getElementById('spinner').style.display='none';
@@ -423,9 +831,10 @@
             document.getElementById('m-user-name').innerText=currU.name; document.getElementById('m-plan-badge').innerText=(currU.plan||'PRO')+' PLAN';
             document.querySelectorAll('#m-nav .nav-item').forEach(el=>{ el.onclick=()=>{
                 document.querySelectorAll('#m-nav .nav-item').forEach(n=>n.classList.remove('active')); el.classList.add('active');
-                document.getElementById('m-title').innerText=el.innerText;
+                document.getElementById('m-title').innerText=el.innerText.replace(/^\S+\s/,'');
                 document.querySelectorAll('#member-view .m-tab').forEach(t=>t.classList.remove('active'));
                 document.getElementById(el.getAttribute('data-tab')).classList.add('active');
+                closeSidebars();
                 if(el.getAttribute('data-tab')==='tab-overview') rMOverview(); if(el.getAttribute('data-tab')==='tab-progress') rMProg();
             }}); rMOverview(); rMAtt(); rMWk(); rMDt(); rMProg(); rMShp();
         }
@@ -436,6 +845,8 @@
             document.getElementById('ov-weight').innerHTML=`${w}<span style="font-size:1rem;color:#888">kg</span>`;
             let tgtW = user.targetWeight || user.tw || 0; let diff=Math.abs(initW-tgtW); let p=diff===0?100:(Math.abs(initW-w)/diff)*100; p=Math.min(100,p);
             document.getElementById('ov-goal-perc').innerText=Math.round(p)+'%'; document.getElementById('ov-goal-bar').style.width=p+'%';
+            if(document.getElementById('hero-pct')) document.getElementById('hero-pct').innerText=Math.round(p)+'%';
+            if(document.getElementById('hero-greeting')) document.getElementById('hero-greeting').innerText='Welcome, '+currU.name;
             
             let tp = wk.plan && wk.plan.days ? wk.plan.days : fbWk;
             let td = new Date().toLocaleDateString('en-US',{weekday:'long'}); let pD=tp.find(x=>x.day===td);
@@ -473,12 +884,14 @@
         }
         async function markW(day, exId, isDone){ await fetchA('/workout/complete','POST',{userId:currU.id, day, exId, isDone}); rMWk(); rMOverview(); }
         async function rMDt(){
+            const mealBgs = { b:'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=800&q=80', l:'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=800&q=80', d:'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&q=80' };
             let data=await fetchA('/diet/'+currU.id); let dtP = data.plan && data.plan.meals ? data.plan.meals : fbDt;
             let comp=data.completed||{}; let td=getToday(); let tc=0, ec=0, tp=0, tcC=0, tf=0;
             let lst = document.getElementById('diet-meals'); lst.innerHTML='';
             dtP.forEach(m=>{
                 tc+=m.cals; let iE=comp[`${td}_${m.id}`]; if(iE){ec+=m.cals; tp+=m.p; tcC+=m.c; tf+=m.f;}
-                lst.innerHTML+=`<div class="card" style="opacity:${iE?'0.6':'1'};border-color:${iE?'var(--success)':'var(--border)'}"><h3 style="color:var(--accent);font-size:1.8rem">${m.n} ${iE?'<span style="color:var(--success)">✓</span>':''}</h3><p style="color:#888">${m.cals} kcal | P:${m.p} C:${m.c} F:${m.f}</p><ul class="meal-list">${m.items.map(i=>`<li>${i}</li>`).join('')}</ul><button class="btn btn-outline" style="width:100%;margin-top:1rem" onclick="markD('${m.id}',${!iE})">${iE?'Undo':'Eaten'}</button></div>`;
+                let bg = mealBgs[m.id] || mealBgs['b'];
+                lst.innerHTML+=`<div class="meal-card" style="opacity:${iE?'0.7':'1'};border-color:${iE?'var(--success)':'var(--border)'}"><div class="meal-bg" style="background-image:url('${bg}')"></div><div class="meal-overlay"></div><div class="meal-content"><h3 style="color:var(--accent);font-size:1.8rem">${m.n} ${iE?'<span style="color:var(--success)">✓</span>':''}</h3><p style="color:rgba(255,255,255,0.7)">${m.cals} kcal | P:${m.p} C:${m.c} F:${m.f}</p><ul class="meal-list">${m.items.map(i=>`<li>${i}</li>`).join('')}</ul><button class="btn btn-outline" style="width:100%;margin-top:1rem" onclick="markD('${m.id}',${!iE})">${iE?'Undo':'Mark Eaten'}</button></div></div>`;
             });
             document.getElementById('diet-tot').innerText=tc; document.getElementById('diet-eaten').innerText=ec;
             document.getElementById('mac-p').innerText=tp; document.getElementById('mac-c').innerText=tcC; document.getElementById('mac-f').innerText=tf;
@@ -507,32 +920,117 @@
             document.querySelector('#prog-list tbody').innerHTML=pr.slice().reverse().map(p=>`<tr><td style="color:#888">${p.date}</td><td style="color:var(--accent)">${p.weight}kg</td><td>${p.notes||'--'}</td></tr>`).join('');
             let s = document.getElementById('prog-chart'); s.setAttribute('viewBox', '0 0 100 100'); s.innerHTML='';
             let chartData = pr.slice(-10);
-            if(chartData.length>1){ 
-                let ma=Math.max(...chartData.map(x=>x.weight))+2; 
-                let mi=Math.min(...chartData.map(x=>x.weight))-2; 
-                let r=ma-mi; 
-                let st=100/(chartData.length-1); 
+            if(chartData.length>0){ 
+                let ma=Math.max(...chartData.map(x=>Number(x.weight)))+2; 
+                let mi=Math.min(...chartData.map(x=>Number(x.weight)))-2; 
+                let r=ma-mi; if (r===0) r=10;
+                let st=chartData.length>1 ? 100/(chartData.length-1) : 0; 
                 let pt='';
                 s.innerHTML += `<rect x="10" y="10" width="85" height="80" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>`;
                 s.innerHTML += `<text x="2" y="15" fill="#888" font-size="4">${Math.round(ma)}kg</text>`;
                 s.innerHTML += `<text x="2" y="90" fill="#888" font-size="4">${Math.round(mi)}kg</text>`;
                 chartData.forEach((p,i)=>{
-                    let px = (i*st)*0.8 + 15; 
-                    let py = (100-(((p.weight-mi)/r)*100))*0.7 + 15; 
+                    let px = chartData.length>1 ? (i*st)*0.8 + 15 : 57.5; 
+                    let py = (100-(((Number(p.weight)-mi)/r)*100))*0.7 + 15; 
                     pt+=`${px},${py} `; 
                     s.innerHTML+=`<circle cx="${px}" cy="${py}" r="1.5" fill="var(--accent)"/>`;
                     s.innerHTML+=`<text x="${px}" y="98" fill="#888" font-size="3" text-anchor="middle">${p.date.substr(5).replace('-','/')}</text>`;
                 });
-                s.innerHTML=`<polyline points="${pt}" fill="none" stroke="var(--accent)" stroke-width="0.5"/>`+s.innerHTML; 
+                if (chartData.length>1) {
+                    s.innerHTML=`<polyline points="${pt.trim()}" fill="none" stroke="var(--accent)" stroke-width="0.5"/>`+s.innerHTML; 
+                }
+            } else {
+                s.innerHTML = `<text x="50" y="50" fill="#888" font-size="5" text-anchor="middle">Log weight to view chart</text>`;
             }
         }
-        async function rMShp(){ let p=await fetchA('/products'); document.getElementById('shop-grid').innerHTML=p.map(i=>`<div class="card" style="text-align:center"><div style="font-size:3rem;margin:1rem">${i.icon}</div><h3>${i.name}</h3><div style="color:var(--accent);font-family:var(--font-head);font-size:1.5rem">₹${i.price}</div><button class="btn btn-outline" style="width:100%;margin-top:1rem" onclick="aC('${i.name}',${i.price})">Add</button></div>`).join(''); }
-        function aC(n,p){ let e=cCart.find(c=>c.n===n); if(e) e.q++; else cCart.push({n,p,q:1}); uCB(); showToast('Added to cart'); }
+        async function rMShp(){
+            let p = await fetchA('/products');
+            window._allP = p;
+            let grid = document.getElementById('shop-grid');
+            grid.innerHTML = `
+                <div style="grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1.5rem" id="shop-filters">
+                    <button class="filter-btn active" onclick="fP('All',this)">All</button>
+                    <button class="filter-btn" onclick="fP('Supplements',this)">Supplements</button>
+                    <button class="filter-btn" onclick="fP('Equipment',this)">Equipment</button>
+                    <button class="filter-btn" onclick="fP('Apparel',this)">Apparel</button>
+                    <button class="filter-btn" onclick="fP('Accessories',this)">Accessories</button>
+                </div>
+            `;
+            renderProducts(p);
+        }
+
+        function renderProducts(products){
+            let grid = document.getElementById('shop-grid');
+            let filterDiv = document.getElementById('shop-filters');
+            grid.innerHTML = '';
+            if(filterDiv) grid.appendChild(filterDiv);
+            products.forEach(i => {
+                let card = document.createElement('div');
+                card.className = 'prod-card';
+                card.innerHTML = `
+                    <div class="prod-img-wrap">
+                        <img class="prod-img" src="${i.img||i.icon||''}" alt="${i.name}" onerror="this.style.opacity='0.3'">
+                        <div class="prod-img-overlay"></div>
+                        <span class="cat-badge">${i.category||'Supplement'}</span>
+                    </div>
+                    <div class="prod-info">
+                        <h3 style="font-size:1.3rem;margin-bottom:0.3rem">${i.name}</h3>
+                        <p style="color:#888;font-size:0.9rem;margin-bottom:1rem">${i.desc}</p>
+                        <div style="display:flex;justify-content:space-between;align-items:center">
+                            <span style="font-family:var(--font-head);font-size:1.8rem;color:var(--accent)">&#8377;${i.price}</span>
+                            <button class="btn" style="padding:0.5rem 1.2rem;font-size:1rem" onclick="aC('${i.name}',${i.price},'${i.img||i.icon||''}')">ADD</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function fP(cat, btn){
+            document.querySelectorAll('.filter-btn').forEach(b=>{ b.classList.remove('active'); });
+            btn.classList.add('active');
+            let filtered = cat==='All' ? window._allP : window._allP.filter(p=>p.category===cat);
+            renderProducts(filtered);
+            document.getElementById('shop-filters') || document.getElementById('shop-grid').prepend(document.createElement('div'));
+        }
+
+        function aC(n,p,img){ 
+            let e=cCart.find(c=>c.n===n); 
+            if(e) e.q++; 
+            else cCart.push({n,p,q:1,img:img||''}); 
+            uCB(); 
+            showToast('&#x2705; '+n+' added to cart'); 
+        }
         function uCQ(n,d){ let e=cCart.find(c=>c.n===n); if(e){e.q+=d; if(e.q<=0) cCart=cCart.filter(c=>c.n!==n);} uCB(); rC(); }
         function uCB(){ let c=cCart.reduce((a,b)=>a+b.q,0); document.getElementById('nav-cart-badge').innerText=c; document.getElementById('cart-t-num').innerText=c; }
         function toggleCart(){ document.getElementById('cart-panel').classList.toggle('open'); rC(); }
-        function rC(){ let t=0; document.getElementById('cart-items').innerHTML=cCart.map(c=>{t+=(c.p*c.q); return `<div class="cart-item"><div><h4>${c.n}</h4><span style="color:var(--accent)">₹${c.p}</span></div><div><button class="btn-outline" onclick="uCQ('${c.n}',-1)">-</button> ${c.q} <button class="btn-outline" onclick="uCQ('${c.n}',1)">+</button></div></div>`}).join(''); document.getElementById('cart-items').innerHTML+=cCart.length?`<div style="text-align:right;font-family:var(--font-head);font-size:1.5rem;color:var(--accent);margin-top:1rem">Total: ₹${t}</div>`:`<p style="color:#888;text-align:center">Empty.</p>`; }
-        async function checkoutCart(){ if(!cCart.length) return; await fetchA('/cart/checkout','POST',{userId:currU.id,items:cCart}); cCart=[]; uCB(); toggleCart(); showToast('Checkout completed'); }
+        function rC(){ 
+            let t=0; 
+            document.getElementById('cart-items').innerHTML=cCart.map(c=>{
+                t+=(c.p*c.q); 
+                return `<div class="cart-item">
+                    <img class="cart-item-img" src="${c.img||''}" alt="${c.n}" onerror="this.style.display='none'">
+                    <div style="flex:1">
+                        <h4 style="margin:0;font-size:1rem">${c.n}</h4>
+                        <span style="color:var(--accent)">&#8377;${c.p} x ${c.q} = &#8377;${c.p*c.q}</span>
+                    </div>
+                    <div class="qty-controls">
+                        <button class="qty-btn" onclick="uCQ('${c.n}',-1)">-</button>
+                        <span>${c.q}</span>
+                        <button class="qty-btn" onclick="uCQ('${c.n}',1)">+</button>
+                    </div>
+                </div>`;
+            }).join(''); 
+            document.getElementById('cart-items').innerHTML += cCart.length ? 
+                `<div style="text-align:right;font-family:var(--font-head);font-size:2rem;color:var(--accent);margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">Total: &#8377;${t}</div>` : 
+                `<p style="color:#888;text-align:center;padding:3rem">Your cart is empty</p>`; 
+        }
+        async function checkoutCart(){ 
+            if(!cCart.length) return showToast('Cart is empty!', true); 
+            await fetchA('/cart/checkout','POST',{userId:currU.id,items:cCart.map(c=>({n:c.n,p:c.p,q:c.q}))}); 
+            cCart=[]; uCB(); toggleCart(); 
+            showToast('&#x2705; Order placed successfully!'); 
+        }
 
         // TRAINER ENGINE
         let tbMems = [];
@@ -540,9 +1038,10 @@
             document.getElementById('t-name').innerText=currU.name;
             document.querySelectorAll('#t-nav .nav-item').forEach(el=>{ el.onclick=()=>{
                 document.querySelectorAll('#t-nav .nav-item').forEach(n=>n.classList.remove('active')); el.classList.add('active');
-                document.getElementById('t-title').innerText=el.innerText;
+                document.getElementById('t-title').innerText=el.innerText.replace(/^\S+\s/,'');
                 document.querySelectorAll('#trainer-view .t-tab').forEach(t=>t.classList.remove('active'));
                 document.getElementById(el.getAttribute('data-tab')).classList.add('active');
+                closeSidebars();
             }}); rTOver(); rTAtt(); rTMems();
             
             let workoutMemberDropdown = document.getElementById('workoutMemberDropdown');
@@ -576,6 +1075,7 @@
             let att = await fetchA('/trainer/attendance/'+currU.id); let td=getToday();
             let cInn = att.filter(a=>a.type==='clockin'&&a.date===td).length; let cOut = att.filter(a=>a.type==='clockout'&&a.date===td).length;
             let iC = cInn > cOut; let b = document.getElementById('btn-tclock'); b.innerText=iC?'Clock Out':'Clock In'; b.className=iC?'btn btn-danger':'btn';
+            b.onclick = () => tClockAct(iC ? 'clockout' : 'clockin');
             
             let dtM={}; let dp=0; att.forEach(a=>{ if(!dtM[a.date]) dtM[a.date]={i:null,o:null,h:0}; if(a.type==='clockin') dtM[a.date].i=a.ts; if(a.type==='clockout') dtM[a.date].o=a.ts; if(dtM[a.date].i && dtM[a.date].o) dtM[a.date].h=((dtM[a.date].o-dtM[a.date].i)/(1000*3600)).toFixed(1); });
             for(let k in dtM){ if(dtM[k].h>0.1) dp++; } document.getElementById('t-spen').innerText=dp;
@@ -588,7 +1088,7 @@
             } document.getElementById('t-shrs').innerText=th;
             document.getElementById('t-shift-log').innerHTML=Object.keys(dtM).reverse().map(k=>`<tr><td>${k}</td><td>${dtM[k].i?new Date(dtM[k].i).toLocaleTimeString():'--'}</td><td>${dtM[k].o?new Date(dtM[k].o).toLocaleTimeString():'--'}</td><td style="color:var(--accent)">${dtM[k].h} hrs</td></tr>`).join('');
         }
-        async function tClockAct(t){ await fetchA('/trainer/attendance','POST',{trainerId:currU.id, type:t, date:getToday(), ts:Date.now()}); showToast(`Clocked ${t==='clockin'?'in':'out'}`); rTAtt(); }
+        async function tClockAct(t){ await fetchA('/trainer/attendance','POST',{trainerId:currU.id, type:t, date:getToday(), ts:Date.now()}); showToast('Clocked '+(t==='clockin'?'In':'Out')); rTAtt(); }
 
         async function rTMems(){ tbMems = await fetchA('/trainer/members'); filterMembers(); }
         function filterMembers(){
@@ -602,7 +1102,7 @@
                 m._c=st==='Active'?'green':st==='Inactive'?'red':'warn'; m._st=st; return true;
             });
             if(!fd.length) return document.getElementById('t-mem-empty').style.display='block'; document.getElementById('t-mem-empty').style.display='none';
-            fd.forEach(m=>{ tb.innerHTML+=`<tr class="clickable" onclick="document.getElementById('exp-${m.id}').classList.toggle('open')"><td><b>${m.name}</b></td><td><span class="badge b-green">${m.plan||'Basic'}</span></td><td>${Math.min(100, Math.round((m.attCount/30)*100))}%</td><td>${m.lastSeen||'Never'}</td><td>${m.hasWk&&m.hasDt?'Assigned':'Missing'}</td><td><span class="badge b-${m._c}">${m._st}</span></td></tr><tr class="expand-row" id="exp-${m.id}"><td colspan="6"><div class="expand-content"><div style="flex:1"><h4>Profile & Goals</h4><p style="color:#888;margin-bottom:1rem">Target: ${m.targetWeight||m.tw||0}kg</p><button class="btn btn-outline" style="font-size:0.8rem;padding:4px 8px" onclick="nav2A('${m.id}')">Configure Plans</button></div></div></td></tr>`; });
+            fd.forEach(m=>{ tb.innerHTML+=`<tr class="clickable" onclick="document.getElementById('exp-${m.id}').classList.toggle('open')"><td><b>${m.name}</b></td><td><span class="badge b-green">${m.plan||'Basic'}</span></td><td>${Math.min(100, Math.round((m.attCount/30)*100))}%</td><td>${m.lastSeen||'Never'}</td><td>${(m.hasWk&&m.hasDt?'Assigned':(m.hasWk?'Workout Only':(m.hasDt?'Diet Only':'Missing')))}</td><td><span class="badge b-${m._c}">${m._st}</span></td></tr><tr class="expand-row" id="exp-${m.id}"><td colspan="6"><div class="expand-content"><div style="flex:1"><h4>Profile &amp; Goals</h4><p style="color:#888;margin-bottom:1rem">Target: ${m.targetWeight||m.tw||0}kg</p><button class="btn btn-outline" style="font-size:0.8rem;padding:4px 8px" onclick="nav2A('${m.id}')">Configure Plans</button></div></div></td></tr>`; });
         }
 
         async function saveWkPlan(){
@@ -612,53 +1112,54 @@
             let notesValue = document.getElementById('fw-notes').value;
             let opt = document.getElementById('workoutMemberDropdown').options[document.getElementById('workoutMemberDropdown').selectedIndex];
             let nm = opt ? opt.text : 'Unknown';
-
-            await fetch('/api/trainer/assign/workout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-role': 'trainer'
-                },
-                body: JSON.stringify({
-                    memberId: selectedMemberId,
-                    planType: selectedPlanType,
-                    frequency: selectedFrequency,
-                    notes: notesValue
-                })
-            });
-            showToast(`Plan assigned to ${nm} successfully`); 
-            rTMems(); rTOver();
+            try {
+                let res = await fetch('/api/trainer/assign/workout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-role': 'trainer' },
+                    body: JSON.stringify({ memberId: selectedMemberId, planType: selectedPlanType, frequency: selectedFrequency, notes: notesValue })
+                });
+                let data = await res.json();
+                if(!res.ok) throw new Error(data.error || 'Failed');
+                showToast('&#x2705; Workout plan assigned to '+nm);
+                rTMems(); rTOver();
+            } catch(e){ showToast('Error: '+e.message, true); }
         }
+
         async function saveDietPlan(){
             let selectedMemberId = document.getElementById('dietMemberDropdown').value;
             let selectedGoal = document.getElementById('fd-gl').value;
-            let caloriesValue = document.getElementById('fd-cals').value;
+            let caloriesValue = +document.getElementById('fd-cals').value;
             let restrictionsValue = document.getElementById('fd-rest').value;
             let proteinPercent = +document.getElementById('fd-p').value;
             let carbsPercent = +document.getElementById('fd-c').value;
             let fatsPercent = +document.getElementById('fd-f').value;
-
             if((proteinPercent+carbsPercent+fatsPercent)!==100) return showToast('Macros must equal 100!', true); 
             let opt = document.getElementById('dietMemberDropdown').options[document.getElementById('dietMemberDropdown').selectedIndex];
             let nm = opt ? opt.text : 'Unknown';
-
-            await fetch('/api/trainer/assign/diet', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-role': 'trainer'
-                },
-                body: JSON.stringify({
-                    memberId: selectedMemberId,
-                    goal: selectedGoal,
-                    calories: parseInt(caloriesValue),
-                    restrictions: restrictionsValue,
-                    macros: { p: proteinPercent, c: carbsPercent, f: fatsPercent }
-                })
-            });
-            showToast(`Plan assigned to ${nm} successfully`); 
-            rTMems(); rTOver();
+            try {
+                let res = await fetch('/api/trainer/assign/diet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-role': 'trainer' },
+                    body: JSON.stringify({ memberId: selectedMemberId, goal: selectedGoal, calories: caloriesValue, restrictions: restrictionsValue, macros: { p: proteinPercent, c: carbsPercent, f: fatsPercent } })
+                });
+                let data = await res.json();
+                if(!res.ok) throw new Error(data.error || 'Failed');
+                showToast('&#x2705; Diet plan assigned to '+nm);
+                rTMems(); rTOver();
+            } catch(e){ showToast('Error: '+e.message, true); }
         }
+
+        // Restore session on page reload
+        window.onload = () => {
+            let sid = sessionStorage.getItem('id'); let srl = sessionStorage.getItem('role'); let snm = sessionStorage.getItem('name');
+            if(sid && srl){
+                currU = {id:sid, role:srl, name:snm};
+                document.getElementById('auth-view').classList.remove('active');
+                document.getElementById('quote-bar').style.display='block';
+                if(srl==='trainer'){ document.getElementById('trainer-view').classList.add('active'); initT(); }
+                else { document.getElementById('member-view').classList.add('active'); initM(); }
+            }
+        };
     </script>
 </body>
 </html>

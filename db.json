@@ -53,6 +53,61 @@
       "plan": "Basic",
       "role": "member",
       "reg": "2026-03-19"
+    },
+    {
+      "id": "u1773941922612",
+      "name": "MEOW",
+      "email": "meow@gmail.com",
+      "pass": "123",
+      "age": 25,
+      "weight": "72",
+      "targetWeight": 80,
+      "plan": "Pro",
+      "role": "member",
+      "reg": "2026-03-19",
+      "lastSeen": "2026-03-24"
+    },
+    {
+      "id": "u1773944155925",
+      "name": "TRAINER",
+      "email": "TRAINER@gmail.com",
+      "pass": "123",
+      "age": 40,
+      "weight": 70,
+      "targetWeight": 80,
+      "plan": "Basic",
+      "role": "member",
+      "reg": "2026-03-19"
+    },
+    {
+      "id": "u1774335686277",
+      "name": "swamini",
+      "email": "swamini@gmail.com",
+      "pass": "123",
+      "age": 19,
+      "sw": 40,
+      "tw": 50,
+      "weight": "41",
+      "targetWeight": 50,
+      "plan": "Elite",
+      "role": "member",
+      "reg": "2026-03-24",
+      "lastSeen": "2026-03-24"
+    },
+    {
+      "id": "u1774339611803",
+      "name": "swapnil",
+      "email": "isw@gmail.com",
+      "pass": "12320",
+      "age": 20,
+      "sw": 60,
+      "tw": 80,
+      "weight": "65",
+      "targetWeight": 80,
+      "plan": "Elite",
+      "role": "member",
+      "reg": "2026-03-24",
+      "lastSeen": "2026-03-24"
     }
   ],
   "attendance": [
@@ -70,6 +125,26 @@
       "userId": "u1773913838105",
       "date": "2026-03-19",
       "ts": 1773913846067
+    },
+    {
+      "userId": "u1773941922612",
+      "date": "2026-03-19",
+      "ts": 1773941931839
+    },
+    {
+      "userId": "u1773941922612",
+      "date": "2026-03-24",
+      "ts": 1774332733988
+    },
+    {
+      "userId": "u1774335686277",
+      "date": "2026-03-24",
+      "ts": 1774335692163
+    },
+    {
+      "userId": "u1774339611803",
+      "date": "2026-03-24",
+      "ts": 1774339618691
     }
   ],
   "trainerAttendance": [
@@ -78,6 +153,30 @@
       "type": "clockin",
       "date": "2026-03-19",
       "ts": 1773913295877
+    },
+    {
+      "trainerId": "t1",
+      "type": "clockout",
+      "date": "2026-03-19",
+      "ts": 1773944189136
+    },
+    {
+      "trainerId": "t1",
+      "type": "clockin",
+      "date": "2026-03-24",
+      "ts": 1774332807749
+    },
+    {
+      "trainerId": "t1",
+      "type": "clockout",
+      "date": "2026-03-24",
+      "ts": 1774335773380
+    },
+    {
+      "trainerId": "t1",
+      "type": "clockin",
+      "date": "2026-03-24",
+      "ts": 1774335774373
     }
   ],
   "progress": [
@@ -92,9 +191,72 @@
       "date": "2026-03-19",
       "weight": "71",
       "notes": "strong"
+    },
+    {
+      "userId": "u1773941922612",
+      "date": "2026-03-19",
+      "weight": "71",
+      "notes": "strong"
+    },
+    {
+      "userId": "u1773941922612",
+      "date": "2026-03-24",
+      "weight": "72",
+      "notes": "strong"
+    },
+    {
+      "userId": "u1774335686277",
+      "date": "2026-03-24",
+      "weight": "41",
+      "notes": "strong"
+    },
+    {
+      "userId": "u1774339611803",
+      "date": "2026-03-24",
+      "weight": "61",
+      "notes": "strong"
+    },
+    {
+      "userId": "u1774339611803",
+      "date": "2026-03-27",
+      "weight": "65",
+      "notes": "strong"
     }
   ],
-  "orders": [],
+  "orders": [
+    {
+      "userId": "u1774335686277",
+      "items": [
+        {
+          "n": "Whey Protein",
+          "p": 1499,
+          "q": 1
+        },
+        {
+          "n": "Pre Workout",
+          "p": 999,
+          "q": 1
+        }
+      ],
+      "date": "2026-03-24"
+    },
+    {
+      "userId": "u1774339611803",
+      "items": [
+        {
+          "n": "Whey Protein",
+          "p": 1499,
+          "q": 1
+        },
+        {
+          "n": "Creatine",
+          "p": 799,
+          "q": 1
+        }
+      ],
+      "date": "2026-03-24"
+    }
+  ],
   "dailyStats": [
     {
       "userId": "u1773913208843",
@@ -107,9 +269,319 @@
       "userId": "u1773913838105",
       "exercises": {},
       "meals": {
+        "2026-03-19_b": false,
+        "2026-03-19_l": true,
+        "2026-03-19_d": true
+      }
+    },
+    {
+      "userId": "u1773941922612",
+      "exercises": {
+        "Thursday_e16": true,
+        "Thursday_e17": true,
+        "Thursday_e18": true,
+        "Thursday_e19": true,
+        "Thursday_e20": true
+      },
+      "meals": {
         "2026-03-19_b": true,
         "2026-03-19_l": true,
         "2026-03-19_d": true
+      }
+    }
+  ],
+  "workouts": [
+    {
+      "userId": "u1774335686277",
+      "plan": {
+        "days": [
+          {
+            "day": "Monday",
+            "title": "Beginner Foundation",
+            "ex": [
+              {
+                "id": "e1",
+                "n": "Bench Press",
+                "s": "4x10"
+              },
+              {
+                "id": "e2",
+                "n": "Incline Press",
+                "s": "3x12"
+              },
+              {
+                "id": "e3",
+                "n": "Cable Flyes",
+                "s": "3x15"
+              },
+              {
+                "id": "e4",
+                "n": "Tricep Dips",
+                "s": "3x12"
+              },
+              {
+                "id": "e5",
+                "n": "Tricep Pushdown",
+                "s": "3x15"
+              }
+            ]
+          },
+          {
+            "day": "Wednesday",
+            "title": "Legs",
+            "ex": [
+              {
+                "id": "e11",
+                "n": "Squats",
+                "s": "4x8"
+              },
+              {
+                "id": "e12",
+                "n": "Leg Press",
+                "s": "3x12"
+              },
+              {
+                "id": "e13",
+                "n": "Lunges",
+                "s": "3x10"
+              },
+              {
+                "id": "e14",
+                "n": "Leg Curls",
+                "s": "3x12"
+              },
+              {
+                "id": "e15",
+                "n": "Calf Raises",
+                "s": "4x15"
+              }
+            ]
+          },
+          {
+            "day": "Friday",
+            "title": "Back and Core",
+            "ex": [
+              {
+                "id": "e6",
+                "n": "Deadlift",
+                "s": "4x8"
+              },
+              {
+                "id": "e7",
+                "n": "Barbell Rows",
+                "s": "4x10"
+              },
+              {
+                "id": "e8",
+                "n": "Pull Ups",
+                "s": "3x8"
+              },
+              {
+                "id": "e21",
+                "n": "Plank",
+                "s": "3x60s"
+              },
+              {
+                "id": "e22",
+                "n": "Crunches",
+                "s": "3x20"
+              }
+            ]
+          }
+        ],
+        "planType": "Beginner Foundation",
+        "frequency": "4 days per week",
+        "notes": "no"
+      },
+      "completed": {
+        "Tuesday_e6": true,
+        "Tuesday_e7": false
+      }
+    },
+    {
+      "userId": "u1774339611803",
+      "plan": {
+        "days": [
+          {
+            "day": "Monday",
+            "title": "Strength and Hypertrophy",
+            "ex": [
+              {
+                "id": "e1",
+                "n": "Bench Press",
+                "s": "4x10"
+              },
+              {
+                "id": "e2",
+                "n": "Incline Press",
+                "s": "3x12"
+              },
+              {
+                "id": "e3",
+                "n": "Cable Flyes",
+                "s": "3x15"
+              },
+              {
+                "id": "e4",
+                "n": "Tricep Dips",
+                "s": "3x12"
+              },
+              {
+                "id": "e5",
+                "n": "Tricep Pushdown",
+                "s": "3x15"
+              }
+            ]
+          },
+          {
+            "day": "Wednesday",
+            "title": "Legs",
+            "ex": [
+              {
+                "id": "e11",
+                "n": "Squats",
+                "s": "4x8"
+              },
+              {
+                "id": "e12",
+                "n": "Leg Press",
+                "s": "3x12"
+              },
+              {
+                "id": "e13",
+                "n": "Lunges",
+                "s": "3x10"
+              },
+              {
+                "id": "e14",
+                "n": "Leg Curls",
+                "s": "3x12"
+              },
+              {
+                "id": "e15",
+                "n": "Calf Raises",
+                "s": "4x15"
+              }
+            ]
+          },
+          {
+            "day": "Friday",
+            "title": "Back and Core",
+            "ex": [
+              {
+                "id": "e6",
+                "n": "Deadlift",
+                "s": "4x8"
+              },
+              {
+                "id": "e7",
+                "n": "Barbell Rows",
+                "s": "4x10"
+              },
+              {
+                "id": "e8",
+                "n": "Pull Ups",
+                "s": "3x8"
+              },
+              {
+                "id": "e21",
+                "n": "Plank",
+                "s": "3x60s"
+              },
+              {
+                "id": "e22",
+                "n": "Crunches",
+                "s": "3x20"
+              }
+            ]
+          }
+        ],
+        "planType": "Strength and Hypertrophy",
+        "frequency": "5 days per week",
+        "notes": "do it"
+      },
+      "completed": {
+        "Tuesday_e6": true,
+        "Tuesday_e7": true
+      }
+    }
+  ],
+  "diets": [
+    {
+      "userId": "u1773941922612",
+      "plan": null,
+      "completed": {
+        "2026-03-24_b": true,
+        "2026-03-24_l": true,
+        "2026-03-24_d": true
+      }
+    },
+    {
+      "userId": "u1774335686277",
+      "plan": null,
+      "completed": {
+        "2026-03-24_b": true,
+        "2026-03-24_l": true,
+        "2026-03-24_d": true
+      }
+    },
+    {
+      "userId": "u1774339611803",
+      "plan": {
+        "meals": [
+          {
+            "id": "b",
+            "n": "Breakfast",
+            "cals": 600,
+            "p": 68,
+            "c": 68,
+            "f": 7,
+            "items": [
+              "Oats",
+              "Eggs",
+              "Banana"
+            ]
+          },
+          {
+            "id": "l",
+            "n": "Lunch",
+            "cals": 800,
+            "p": 90,
+            "c": 90,
+            "f": 9,
+            "items": [
+              "Rice",
+              "Chicken/Paneer",
+              "Salad"
+            ]
+          },
+          {
+            "id": "d",
+            "n": "Dinner",
+            "cals": 600,
+            "p": 68,
+            "c": 68,
+            "f": 7,
+            "items": [
+              "Roti",
+              "Vegetables",
+              "Curd"
+            ]
+          }
+        ],
+        "goal": "Muscle Gain",
+        "calories": 2000,
+        "restrictions": "no",
+        "macros": {
+          "p": 45,
+          "c": 45,
+          "f": 10
+        }
+      },
+      "completed": {
+        "2026-03-24_b": true,
+        "2026-03-24_l": true,
+        "2026-03-24_d": true
       }
     }
   ]
